@@ -14,31 +14,41 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
-
-export function CardWithForm() {
+export function ProjectCard() {
   const [projectName, setProjectName] = useState('');
-  const [projects, setProjects] = useState<{ name: string }[]>([]);
+  const [roomCount, setRoomCount] = useState(0);
+  const [addedProject, setAddedProject] = useState<{
+    name: string;
+    rooms: number;
+  }>();
+  const [projects, setProjects] = useState<{ name: string; rooms: number }[]>(
+    []
+  );
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const getProjects = async () => {
       const { data } = await supabase.from('projects').select();
       if (data) {
-        setProjects(data as any);
+        setProjects(data);
       }
     };
-    fetchProjects();
-  }, [supabase]);
+
+    getProjects();
+  }, [supabase, setProjects]);
 
   const handleAddProject = async () => {
     if (projectName) {
       const { error } = await supabase
         .from('projects')
-        .insert([{ project_name: projectName }]);
+        .insert([{ project_name: projectName, room_count: roomCount }]);
 
       if (!error) {
-        setProjects([...projects, { name: projectName }]);
+        setProjects([...projects, { name: projectName, rooms: roomCount }]);
+        setAddedProject({ name: projectName, rooms: roomCount });
+
         setProjectName('');
+        setRoomCount(0);
       } else {
         console.error('Error adding project:', error);
       }
@@ -66,6 +76,16 @@ export function CardWithForm() {
                 placeholder='Name of your project'
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
+              />
+            </div>
+            <div className='flex flex-col space-y-1.5'>
+              <Label htmlFor='name'>Rooms</Label>
+              <Input
+                id='rooms'
+                placeholder='Number of rooms'
+                type='number'
+                value={roomCount}
+                onChange={(e) => setRoomCount(parseInt(e.target.value))}
               />
             </div>
           </div>
