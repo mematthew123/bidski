@@ -1,7 +1,5 @@
 'use client';
-import * as React from 'react';
-
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -10,27 +8,40 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useEffect, useState } from 'react';
-export function ProjectCard() {
-  const [projectName, setProjectName] = useState('');
-  const [roomCount, setRoomCount] = useState(0);
-  const [addedProject, setAddedProject] = useState<{
-    name: string;
-    rooms: number;
-  }>();
-  const [projects, setProjects] = useState<{ name: string; rooms: number }[]>(
-    []
+import { Button } from './ui/button';
+
+interface FormGroupProps {
+  label: string;
+  children: React.ReactNode;
+}
+
+function FormGroup({ label, children }: FormGroupProps) {
+  return (
+    <div className='flex flex-col space-y-1.5'>
+      <label>{label}</label>
+      {children}
+    </div>
   );
+}
+
+export function ProjectCard() {
   const supabase = createClientComponentClient();
+
+  const [project, setProject] = useState({
+    name: '',
+    rooms: 0,
+    squareFeet: 0,
+    needsCleaning: false,
+    paintType: '',
+  });
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     const getProjects = async () => {
       const { data } = await supabase.from('projects').select();
       if (data) {
-        setProjects(data);
+        setProjects(data as any);
       }
     };
 
@@ -38,17 +49,26 @@ export function ProjectCard() {
   }, [supabase, setProjects]);
 
   const handleAddProject = async () => {
-    if (projectName) {
-      const { error } = await supabase
-        .from('projects')
-        .insert([{ project_name: projectName, room_count: roomCount }]);
+    if (project.name) {
+      const { error } = await supabase.from('projects').insert([
+        {
+          project_name: project.name,
+          room_count: project.rooms,
+          square_footage: project.squareFeet,
+          needs_cleaning: project.needsCleaning,
+          paint_type: project.paintType,
+        },
+      ]);
 
       if (!error) {
-        setProjects([...projects, { name: projectName, rooms: roomCount }]);
-        setAddedProject({ name: projectName, rooms: roomCount });
-
-        setProjectName('');
-        setRoomCount(0);
+        setProjects: [...projects, project];
+        setProject({
+          name: '',
+          rooms: 0,
+          squareFeet: 0,
+          needsCleaning: false,
+          paintType: '',
+        });
       } else {
         console.error('Error adding project:', error);
       }
@@ -68,31 +88,78 @@ export function ProjectCard() {
             handleAddProject();
           }}
         >
-          <div className=' w-full items-center gap-4'>
-            <div className='flex flex-col space-y-1.5'>
-              <Label htmlFor='name'>Name</Label>
-              <Input
-                id='name'
-                placeholder='Name of your project'
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-              />
-            </div>
-            <div className='flex flex-col space-y-1.5'>
-              <Label htmlFor='name'>Rooms</Label>
-              <Input
-                id='rooms'
-                placeholder='Number of rooms'
-                type='number'
-                value={roomCount}
-                onChange={(e) => setRoomCount(parseInt(e.target.value))}
-              />
-            </div>
-          </div>
+          <FormGroup label='Name'>
+            <input
+              id='projectName'
+              placeholder='Name of your project'
+              value={project.name}
+              onChange={(e) =>
+                setProject((prev) => ({ ...prev, name: e.target.value }))
+              }
+            />
+          </FormGroup>
+
+          <FormGroup label='Rooms'>
+            <input
+              id='rooms'
+              placeholder='Number of rooms'
+              type='number'
+              value={project.rooms}
+              onChange={(e) =>
+                setProject((prev) => ({
+                  ...prev,
+                  rooms: parseInt(e.target.value),
+                }))
+              }
+            />
+          </FormGroup>
+
+          <FormGroup label='Square feet'>
+            <input
+              id='squareFeet'
+              placeholder='Square feet'
+              type='number'
+              value={project.squareFeet}
+              onChange={(e) =>
+                setProject((prev) => ({
+                  ...prev,
+                  squareFeet: parseInt(e.target.value),
+                }))
+              }
+            />
+          </FormGroup>
+
+          <FormGroup label='Needs cleaning?'>
+            <input
+              id='needsCleaning'
+              placeholder='Needs cleaning?'
+              type='checkbox'
+              onChange={(e) =>
+                setProject((prev) => ({
+                  ...prev,
+                  needsCleaning: e.target.checked,
+                }))
+              }
+            />
+          </FormGroup>
+
+          <FormGroup label='Paint type'>
+            <input
+              id='paintType'
+              placeholder='Paint type'
+              value={project.paintType}
+              onChange={(e) =>
+                setProject((prev) => ({ ...prev, paintType: e.target.value }))
+              }
+            />
+          </FormGroup>
         </form>
       </CardContent>
       <CardFooter className='flex justify-between'>
-        <Button variant='outline' onClick={() => setProjectName('')}>
+        <Button
+          variant='outline'
+          onClick={() => setProject((prev) => ({ ...prev, name: '' }))}
+        >
           Cancel
         </Button>
         <Button type='submit' onClick={handleAddProject}>
