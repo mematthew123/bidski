@@ -1,5 +1,6 @@
 import Navigation from '@/components/Navigation';
 import './globals.css';
+import HeaderComponent from '@/components/Header';
 
 export const metadata = {
   title: 'Create Next App',
@@ -14,9 +15,8 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body>
-        <main className='min-h-screen flex flex-col px-6 items-center'>
-          <Navigation />
-
+        <main className='min-h-screen p-4 px-6 items-center'>
+          {/* <Navigation /> */}
           {children}
         </main>
       </body>

@@ -3,9 +3,9 @@ import React from 'react';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import SideBar from '@/components/SideBar';
+import ProjectWrapper from '@/components/ProjectWrapper';
 
-export default async function page() {
+export default async function Page() {
   const supabase = createServerComponentClient({ cookies });
   const {
     data: { user },
@@ -17,22 +17,29 @@ export default async function page() {
   }
 
   return (
-    <div className='w-full mx-auto mt-10 lg:mt-10 grid lg:grid-cols-2 h-screen md:h-96  gap-4'>
-      <SideBar />
-      <div className='container mx-auto'>
-        <h2 className='text-2xl font-bold text-gray-800'>My Projects</h2>
-        <p className='text-gray-600'> Hello {user?.email}</p>
-      </div>
-      <Link href='/new-project'>
-        <div className='bg-gray-100 h-full cursor-auto flex items-center justify-center'>
-          Start New Bid
+    <ProjectWrapper>
+      <section className='h-screen flex flex-col justify-center items-center'>
+        <div className='container mx-auto text-center'>
+          <h1 className='text-3xl font-bold text-purple-600'>
+            Welcome{user ? `, ${user.email}` : ''}!
+          </h1>
+          <h1 className='text-3xl font-bold text-purple-600'>
+            What would you like to do?
+          </h1>
+          <div className='container mx-auto gap-4 flex  justify-center items-center'>
+            <Link href='/new-project'>
+              <button className='bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mt-10'>
+                Create a new project
+              </button>
+            </Link>
+            <Link href='/current-projects'>
+              <button className='bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mt-10'>
+                Current projects
+              </button>
+            </Link>
+          </div>
         </div>
-      </Link>
-      <Link href='/current-projects'>
-        <div className='bg-gray-100 h-full cursor-auto flex items-center justify-center'>
-          Current Projects
-        </div>
-      </Link>
-    </div>
+      </section>
+    </ProjectWrapper>
   );
 }

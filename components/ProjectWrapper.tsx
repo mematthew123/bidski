@@ -1,3 +1,6 @@
+import React, { ReactNode } from 'react';
+import HeaderComponent from './Header';
+
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
   { name: 'Team', href: '#', current: false },
@@ -10,11 +13,13 @@ const navigation = [
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
-
-export default function SideBar() {
+function SideBar() {
   return (
-    <nav className='flex ' aria-label='Sidebar'>
-      <ul role='list' className='-mx-2 space-y-1'>
+    <nav
+      className='fixed top-0 left-0 h-full w-64 bg-white'
+      aria-label='Sidebar'
+    >
+      <ul role='list' className='space-y-1 py-4 pr-4'>
         {navigation.map((item) => (
           <li key={item.name}>
             <a
@@ -34,3 +39,22 @@ export default function SideBar() {
     </nav>
   );
 }
+
+interface ProjectWrapperProps {
+  children: ReactNode;
+}
+
+const ProjectWrapper = ({ children }: ProjectWrapperProps) => {
+  return (
+    <>
+      <HeaderComponent />
+      {/* <SideBar /> */}
+
+      <div className='flex h-screen bg-gray-50 ml-64 overflow-hidden'>
+        {children}
+      </div>
+    </>
+  );
+};
+
+export default ProjectWrapper;

@@ -3,7 +3,7 @@ import React from 'react';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import RoomsCard from '@/components/RoomsCard';
+import ProjectWrapper from '@/components/ProjectWrapper';
 
 export default async function page() {
   const supabase = createServerComponentClient({ cookies });
@@ -17,8 +17,9 @@ export default async function page() {
   }
   return (
     <div>
-      <div>new project page</div>
-      <ProjectCard />
+      <ProjectWrapper>
+        <ProjectCard />
+      </ProjectWrapper>
     </div>
   );
 }

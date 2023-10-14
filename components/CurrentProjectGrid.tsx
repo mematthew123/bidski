@@ -1,6 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const CurrentProjectGrid = () => {
   const [projects, setProjects] = useState([]);
@@ -25,15 +27,17 @@ const CurrentProjectGrid = () => {
 
       <div className='w-full mx-auto mt-10 lg:mt-10 grid lg:grid-cols-2 h-screen md:h-96  gap-4'>
         {projects.map((project: any) => (
-          <div
-            key={project.id}
-            className='bg-gray-100 h-full cursor-auto flex items-center justify-center'
-          >
-            <div className='grid grid-cols-1 gap-4'>
-              <h2>Project Name</h2>
-              <p className='text-gray-600'> {project.project_name}</p>
+          <Link href={`/project/${project.project_name}`}>
+            <div
+              key={project.name}
+              className='bg-gray-100 h-full cursor-auto flex items-center justify-center'
+            >
+              <div className='grid grid-cols-1 gap-4'>
+                <h2>Project Name</h2>
+                <p className='text-gray-600'> {project.project_name}</p>
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
