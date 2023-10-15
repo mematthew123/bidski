@@ -20,6 +20,8 @@ const CurrentProjectGrid = () => {
     getProjects();
   }, [supabase, setProjects]);
 
+  console.log(projects.length);
+  // When we select
   return (
     // we render the project name here.
     <div className='container mx-auto'>
