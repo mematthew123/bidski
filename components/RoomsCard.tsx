@@ -1,6 +1,5 @@
 'use client';
 import * as React from 'react';
-
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -17,13 +16,15 @@ import { useEffect, useState } from 'react';
 
 export default function RoomsCard() {
   const supabase = createClientComponentClient();
-  // State for room details
-  const [roomType, setRoomType] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [squareFootage, setSquareFootage] = useState('');
-  const [rooms, setRooms] = useState<{ name: string }[]>([]);
 
-  // we want to add the room details to the rooms table
+  // Updated state for room details based on the rooms table structure
+  const [roomName, setRoomName] = useState('');
+  const [width, setWidth] = useState('');
+  const [length, setLength] = useState('');
+  const [height, setHeight] = useState('');
+  const [colorChoice, setColorChoice] = useState('');
+  const [notes, setNotes] = useState('');
+  const [rooms, setRooms] = useState<any[]>([]);
 
   // Fetch existing rooms
   useEffect(() => {
@@ -40,16 +41,22 @@ export default function RoomsCard() {
   const handleRoomDetails = async () => {
     const { error } = await supabase.from('rooms').insert([
       {
-        room_type: roomType,
-        quantity: Number(quantity),
-        square_footage: parseFloat(squareFootage),
+        room_name: roomName,
+        width: parseFloat(width),
+        length: parseFloat(length),
+        height: parseFloat(height),
+        color_choice: colorChoice,
+        notes: notes,
       },
     ]);
     if (!error) {
-      setRooms([...rooms, { name: roomType }]);
-      setRoomType('');
-      setQuantity('');
-      setSquareFootage('');
+      setRooms([...rooms, { room_name: roomName }]);
+      setRoomName('');
+      setWidth('');
+      setLength('');
+      setHeight('');
+      setColorChoice('');
+      setNotes('');
     } else {
       console.error('Error adding room details:', error);
     }
@@ -59,7 +66,7 @@ export default function RoomsCard() {
     <div>
       <Card className='w-[350px]'>
         <CardHeader>
-          <CardTitle>Project Details</CardTitle>{' '}
+          <CardTitle> Room Details</CardTitle>
           <CardDescription>Add details</CardDescription>
           <form
             onSubmit={(e) => {
@@ -69,18 +76,74 @@ export default function RoomsCard() {
           >
             <div className=' w-full items-center gap-4'>
               <div className='flex flex-col space-y-1.5'>
-                <Label htmlFor='name'>Rooms</Label>
+                <Label htmlFor='roomName'>Room Name</Label>
                 <Input
-                  id='name'
-                  value={roomType}
-                  onChange={(e) => setRoomType(e.target.value)}
-                  placeholder='Room Type'
+                  id='roomName'
+                  value={roomName}
+                  onChange={(e) => setRoomName(e.target.value)}
+                  placeholder='Room Name'
                 />
+
+                <Label htmlFor='width'>Width</Label>
+                <Input
+                  id='width'
+                  value={width}
+                  onChange={(e) => setWidth(e.target.value)}
+                  placeholder='Width'
+                />
+
+                <Label htmlFor='length'>Length</Label>
+                <Input
+                  id='length'
+                  value={length}
+                  onChange={(e) => setLength(e.target.value)}
+                  placeholder='Length'
+                />
+
+                <Label htmlFor='height'>Height</Label>
+                <Input
+                  id='height'
+                  value={height}
+                  onChange={(e) => setHeight(e.target.value)}
+                  placeholder='Height'
+                />
+
+                <Label htmlFor='colorChoice'>Color Choice</Label>
+                <Input
+                  id='colorChoice'
+                  value={colorChoice}
+                  onChange={(e) => setColorChoice(e.target.value)}
+                  placeholder='Color Choice'
+                />
+
+                <Label htmlFor='notes'>Notes</Label>
+                <Input
+                  id='notes'
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder='Notes'
+                />
+
+                <Button type='submit'>Add Room</Button>
               </div>
             </div>
           </form>
         </CardHeader>
-        <CardContent></CardContent>
+        <CardContent>
+          <CardFooter className='flex justify-between'>
+            <Button
+              variant='outline'
+              onClick={() =>
+                setRoomName((prev: any) => ({ ...prev, name: '' }))
+              }
+            >
+              Cancel
+            </Button>
+            <Button type='submit' onClick={handleRoomDetails}>
+              Add
+            </Button>
+          </CardFooter>
+        </CardContent>
       </Card>
     </div>
   );
