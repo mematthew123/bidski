@@ -1,10 +1,12 @@
 import React from 'react';
-import MyComponent from '@/components/TextComponent';
+import OneBidComponent from '@/components/OneBidComponent';
+import Widget from '@/components/Widget';
 
 function page() {
   return (
-    <div className='container mx-auto flex justify-center mt-20 '>
-      <MyComponent />
+    <div className='container bg-gray-200 h-screen mx-auto flex justify-center mt-20 '>
+      {/* <OneBidComponent /> */}
+      <Widget />
     </div>
   );
 }

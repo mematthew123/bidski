@@ -98,61 +98,6 @@ export function ProjectCard() {
               }
             />
           </FormGroup>
-
-          <FormGroup label='Rooms'>
-            <input
-              id='rooms'
-              placeholder='Number of rooms'
-              type='number'
-              value={project.rooms}
-              onChange={(e) =>
-                setProject((prev) => ({
-                  ...prev,
-                  rooms: parseInt(e.target.value),
-                }))
-              }
-            />
-          </FormGroup>
-
-          <FormGroup label='Square feet'>
-            <input
-              id='squareFeet'
-              placeholder='Square feet'
-              type='number'
-              value={project.squareFeet}
-              onChange={(e) =>
-                setProject((prev) => ({
-                  ...prev,
-                  squareFeet: parseInt(e.target.value),
-                }))
-              }
-            />
-          </FormGroup>
-
-          <FormGroup label='Needs cleaning?'>
-            <input
-              id='needsCleaning'
-              placeholder='Needs cleaning?'
-              type='checkbox'
-              onChange={(e) =>
-                setProject((prev) => ({
-                  ...prev,
-                  needsCleaning: e.target.checked,
-                }))
-              }
-            />
-          </FormGroup>
-
-          <FormGroup label='Paint type'>
-            <input
-              id='paintType'
-              placeholder='Paint type'
-              value={project.paintType}
-              onChange={(e) =>
-                setProject((prev) => ({ ...prev, paintType: e.target.value }))
-              }
-            />
-          </FormGroup>
         </form>
       </CardContent>
       <CardFooter className='flex justify-between'>

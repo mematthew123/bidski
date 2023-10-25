@@ -2,21 +2,34 @@
 import { useQuery } from '@apollo/client';
 import { SOURCES_QUERY } from '@/lib/queries';
 import client from '@/lib/apollo-client';
+import OneBidForm, { OneBidFormData } from './OneBidForm'; // adjust path as needed
+import { useState } from 'react';
 
-function MyComponent() {
+function OneBidComponent() {
+  const [inputData, setInputData] = useState<OneBidFormData>({
+    state: 'Montana',
+    county: 'Missoula',
+    searchTerm: 'painting',
+    pageLimit: 10,
+  });
+
   const { loading, error, data } = useQuery(SOURCES_QUERY, {
     client,
     variables: {
       input: {
-        state: 'California',
-        county: 'Los Angeles County',
-        searchTerm: 'water filtration',
+        state: inputData.state,
+        county: inputData.county,
+        searchTerm: inputData.searchTerm,
         page: {
-          limit: 3,
+          limit: inputData.pageLimit,
         },
       },
     },
   });
+
+  const handleFormSubmit = (data: OneBidFormData) => {
+    setInputData(data);
+  };
 
   console.log(data);
 
@@ -25,6 +38,8 @@ function MyComponent() {
 
   return (
     <div>
+      <OneBidForm onSubmit={handleFormSubmit} />
+
       {data.sources.nodes.map((node: any) => (
         <div key={node.id}>
           <p>{node.name}</p>
@@ -41,4 +56,4 @@ function MyComponent() {
   );
 }
 
-export default MyComponent;
+export default OneBidComponent;
