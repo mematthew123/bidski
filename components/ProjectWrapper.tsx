@@ -48,11 +48,7 @@ const ProjectWrapper = ({ children }: ProjectWrapperProps) => {
   return (
     <>
       <HeaderComponent />
-      {/* <SideBar /> */}
-
-      <div className='flex h-screen bg-gray-50 ml-64 overflow-hidden'>
-        {children}
-      </div>
+      <div className=' h-screen bg-gray-50 overflow-hidden'>{children}</div>
     </>
   );
 };

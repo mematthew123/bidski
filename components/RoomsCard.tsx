@@ -1,12 +1,10 @@
 'use client';
 import * as React from 'react';
 
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -15,7 +13,13 @@ import { Label } from '@/components/ui/label';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
 
-export default function RoomsCard() {
+interface RoomsCardProps {
+  projectId: number | null;
+}
+
+export default function RoomsCard({ projectId }: RoomsCardProps) {
+  console.log('Rendering RoomsCard with projectId:', projectId);
+
   const supabase = createClientComponentClient();
   // State for room details
   const [roomType, setRoomType] = useState('');
@@ -24,7 +28,6 @@ export default function RoomsCard() {
   const [rooms, setRooms] = useState<{ name: string }[]>([]);
 
   // we want to add the room details to the rooms table
-
   // Fetch existing rooms
   useEffect(() => {
     const getRooms = async () => {
@@ -43,6 +46,7 @@ export default function RoomsCard() {
         room_type: roomType,
         quantity: Number(quantity),
         square_footage: parseFloat(squareFootage),
+        project_id: projectId, // Include project_id to associate room with project
       },
     ]);
     if (!error) {

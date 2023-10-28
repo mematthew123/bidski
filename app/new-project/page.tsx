@@ -1,4 +1,4 @@
-import { ProjectCard } from '@/components/ProjectCard';
+import NewProjectCard from '@/components/NewProjectCard';
 import React from 'react';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -18,7 +18,7 @@ export default async function page() {
   return (
     <div>
       <ProjectWrapper>
-        <ProjectCard />
+        <NewProjectCard />
       </ProjectWrapper>
     </div>
   );

@@ -18,27 +18,25 @@ export default async function Page() {
 
   return (
     <ProjectWrapper>
-      <section className='h-screen flex flex-col justify-center items-center'>
-        <div className='container mx-auto text-center'>
-          <h1 className='text-3xl font-bold text-purple-600'>
-            Welcome{user ? `, ${user.email}` : ''}!
-          </h1>
-          <h1 className='text-3xl font-bold text-purple-600'>
-            What would you like to do?
-          </h1>
-          <div className='container mx-auto gap-4 flex  justify-center items-center'>
-            <Link href='/new-project'>
-              <button className='bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mt-10'>
-                Create a new project
-              </button>
-            </Link>
-            <Link href='/current-projects'>
-              <button className='bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mt-10'>
-                Current projects
-              </button>
-            </Link>
-          </div>
-        </div>
+      <section className='h-screen mt-40 text-center flex-col align-middle items-center'>
+        <h1 className='text-3xl font-bold text-purple-600'>
+          Welcome{user ? `, ${user.email}` : ''}!
+        </h1>
+        <h1 className='text-3xl mt-20 font-bold text-purple-600'>
+          What would you like to do?
+        </h1>
+        <section className='flex flex-col space-y-4'>
+          <Link href='/new-project'>
+            <button className='bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mt-10'>
+              Create a new project
+            </button>
+          </Link>
+          <Link href='/current-projects'>
+            <button className='bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mt-10'>
+              Current projects
+            </button>
+          </Link>
+        </section>
       </section>
     </ProjectWrapper>
   );

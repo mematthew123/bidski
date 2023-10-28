@@ -25,17 +25,21 @@ function FormGroup({ label, children }: FormGroupProps) {
   );
 }
 
-export function ProjectCard() {
+interface ProjectCardProps {
+  setProjectId: React.Dispatch<React.SetStateAction<number | null>>;
+  setProjectStarted: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export function ProjectCard({
+  setProjectId,
+  setProjectStarted,
+}: ProjectCardProps) {
   const supabase = createClientComponentClient();
 
   const [project, setProject] = useState({
     name: '',
-    rooms: 0,
-    squareFeet: 0,
-    needsCleaning: false,
-    paintType: '',
   });
-  const [projects, setProjects] = useState([]);
+  const [, setProjects] = useState([]);
 
   useEffect(() => {
     const getProjects = async () => {
@@ -50,33 +54,25 @@ export function ProjectCard() {
 
   const handleAddProject = async () => {
     if (project.name) {
-      const { error } = await supabase.from('projects').insert([
+      const { data, error } = await supabase.from('projects').insert([
         {
           project_name: project.name,
-          room_count: project.rooms,
-          square_footage: project.squareFeet,
-          needs_cleaning: project.needsCleaning,
-          paint_type: project.paintType,
         },
       ]);
 
-      if (!error) {
-        setProjects: [...projects, project];
-        setProject({
-          name: '',
-          rooms: 0,
-          squareFeet: 0,
-          needsCleaning: false,
-          paintType: '',
-        });
+      if (!error && data) {
+        const newProject = data[0] as { project_id: number }; // Add type annotation
+        setProjectId(newProject.project_id);
+        setProjectStarted(true); // Set projectStarted to true when project is successfully created
       } else {
-        console.error('Error adding project:', error);
+        console.log('Data:', data);
+        console.log('Error:', error);
       }
     }
   };
 
   return (
-    <Card className='w-[350px]'>
+    <Card className='w-full'>
       <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Start your estimate.</CardDescription>
@@ -108,7 +104,7 @@ export function ProjectCard() {
           Cancel
         </Button>
         <Button type='submit' onClick={handleAddProject}>
-          Add
+          Start Project
         </Button>
       </CardFooter>
     </Card>
