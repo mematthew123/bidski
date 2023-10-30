@@ -50,7 +50,7 @@ const ProjectWrapper = ({ children }: ProjectWrapperProps) => {
       <HeaderComponent />
       {/* <SideBar /> */}
 
-      <div className='flex h-screen bg-gray-50 ml-64 overflow-hidden'>
+      <div className='flex-col h-screen bg-gray-50  overflow-hidden'>
         {children}
       </div>
     </>

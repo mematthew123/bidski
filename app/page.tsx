@@ -1,6 +1,7 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import LogoutButton from '../components/LogoutButton';
+import { useRouter } from 'next/navigation';
 
 export default async function Index() {
   const supabase = createServerComponentClient({ cookies });
@@ -17,7 +18,13 @@ export default async function Index() {
           The best way to manage your projects
         </h1>
         {user ? (
-          <LogoutButton />
+          // if user is logged in, route to dashboard
+          <div className='flex flex-col justify-center items-center h-full'>
+            <a href='/dashboard' className='py-2 px-3 rounded-md text-white'>
+              Dashboard
+            </a>
+            <LogoutButton />
+          </div>
         ) : (
           <a
             href='/login'

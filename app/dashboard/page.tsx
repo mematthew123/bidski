@@ -18,8 +18,8 @@ export default async function Page() {
 
   return (
     <ProjectWrapper>
-      <section className='h-screen flex flex-col justify-center items-center'>
-        <div className='container mx-auto text-center'>
+      <section className='h-screen flex  justify-center items-center'>
+        <div className=' items-center text-center'>
           <h1 className='text-3xl font-bold text-purple-600'>
             Welcome{user ? `, ${user.email}` : ''}!
           </h1>

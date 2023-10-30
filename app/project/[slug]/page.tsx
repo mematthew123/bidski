@@ -1,29 +1,35 @@
-'use client';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import SingleProjectCard from '@/components/SingleProjectCard';
 
-import { Database } from '@/types/supabase';
-import { useParams } from 'next/navigation';
+export default async function page() {
+  const supabase = createServerComponentClient({ cookies });
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-async function getProject(slug: string) {
-  const res = await fetch(`https://.../projects/${slug}`);
-  const project = await res.json();
-  console.log(project);
-  return project;
-}
+  console.log(user);
+  if (!user) {
+    redirect('/login');
+  }
 
-export default function Page() {
-  const params = useParams();
+  async function fetchSingleProject() {
+    let { data, error } = await supabase.from('projects').select('*');
+
+    if (error) {
+      console.error('Error fetching projects:', error);
+      return [];
+    }
+  }
+
+  fetchSingleProject().then((projects) => {
+    console.log(projects);
+  });
+
   return (
-    <div className='container mx-auto'>
-      <h2 className='text-2xl font-bold text-gray-800'>Current Project</h2>
-      <div className='w-full mx-auto mt-10 lg:mt-10 h-screen md:h-96'>
-        <div className='bg-gray-100 h-full cursor-pointer flex items-center justify-center'>
-          <div className='grid grid-cols-1 gap-4'>
-            <h2>Project Name</h2>
-            <p className='text-gray-600'>{params.slug}</p>
-            <p className='text-gray-600'>Project Description</p>
-          </div>
-        </div>
-      </div>
+    <div>
+      <SingleProjectCard />
     </div>
   );
 }
