@@ -4,6 +4,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import CurrentProjectGrid from '@/components/CurrentProjectGrid';
 
+export const dynamic = 'force-dynamic';
+
 export default async function page() {
   const supabase = createServerComponentClient({ cookies });
   const {
