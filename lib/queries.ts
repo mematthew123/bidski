@@ -13,3 +13,22 @@ export const SOURCES_QUERY = gql`
     }
   }
 `;
+
+export const TREE_QUERY = gql`
+  query categoryTreeItems($input: CategoryPathSearchInput!) {
+    categoryTreeItems(input: $input) {
+      nodes {
+        id
+        name
+        hasSubCategories
+      }
+      pageInfo {
+        hasNextPage
+      }
+      dataLocation {
+        countyName
+        stateName
+      }
+    }
+  }
+`;

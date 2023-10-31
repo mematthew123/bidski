@@ -8,6 +8,7 @@ export interface OneBidFormData {
   county: string;
   searchTerm: string;
   pageLimit: number;
+  categoryTreeItem?: string;
 }
 
 interface OneBidFormProps {
@@ -19,7 +20,7 @@ const OneBidForm: React.FC<OneBidFormProps> = ({ onSubmit }) => {
     state: '',
     county: '',
     searchTerm: '',
-    pageLimit: 3, // default value
+    pageLimit: 5,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,20 +40,25 @@ const OneBidForm: React.FC<OneBidFormProps> = ({ onSubmit }) => {
         value={formData.state}
         onChange={handleChange}
         placeholder='State'
+        className='bg-gray-50 my-8 px-4'
       />
       <input
         name='county'
         value={formData.county}
         onChange={handleChange}
         placeholder='County'
+        className='bg-gray-50 my-8 px-4'
       />
       <input
         name='searchTerm'
         value={formData.searchTerm}
         onChange={handleChange}
         placeholder='Search Term'
+        className='bg-gray-50 my-8 px-4'
       />
-      <button type='submit'>Submit</button>
+      <button className='my-8 px-4' type='submit'>
+        Submit
+      </button>
     </form>
   );
 };

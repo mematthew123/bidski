@@ -10,7 +10,8 @@ function OneBidComponent() {
     state: 'Montana',
     county: 'Missoula',
     searchTerm: 'painting',
-    pageLimit: 10,
+    categoryTreeItem: 'Painting',
+    pageLimit: 1,
   });
 
   const { loading, error, data } = useQuery(SOURCES_QUERY, {
@@ -23,12 +24,13 @@ function OneBidComponent() {
         page: {
           limit: inputData.pageLimit,
         },
+        // categoryTreeItem: inputData.categoryTreeItem,
       },
     },
   });
 
   const handleFormSubmit = (data: OneBidFormData) => {
-    setInputData(data);
+    setInputData(data as OneBidFormData);
   };
 
   console.log(data);
@@ -42,14 +44,19 @@ function OneBidComponent() {
 
       {data.sources.nodes.map((node: any) => (
         <div key={node.id}>
-          <p>{node.name}</p>
+          <p className='text-2xl font-bold'>{node.name}</p>
           {/* Convert cents to dollars for display */}
-          <p>
+          <p className='text-xl'>
             Calculated Unit Rate: $
             {(node.calculatedUnitRateUsdCents / 100).toFixed(2)}
           </p>
-          <p>Labor Rate: ${(node.laborRateUsdCents / 100).toFixed(2)}</p>
-          <p>Material Rate: ${(node.materialRateUsdCents / 100).toFixed(2)}</p>
+          <p className='text-2xl font-bold'>
+            {' '}
+            ${(node.laborRateUsdCents / 100).toFixed(2)}
+          </p>
+          <p className='text-2xl font-bold'>
+            Material Rate: ${(node.materialRateUsdCents / 100).toFixed(2)}
+          </p>
         </div>
       ))}
     </div>
