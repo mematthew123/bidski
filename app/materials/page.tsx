@@ -2,8 +2,10 @@ import React from 'react';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import MaterialsCard from '@/components/MaterialsCard';
+import CurrentMaterialGrid from '@/components/CurrentMaterialsGrid';
 import ProjectWrapper from '@/components/ProjectWrapper';
+
+export const dynamic = 'force-dynamic';
 
 export default async function Page() {
   const supabase = createServerComponentClient({ cookies });
@@ -19,7 +21,7 @@ export default async function Page() {
   return (
     <div>
       <ProjectWrapper>
-        <MaterialsCard />
+        <CurrentMaterialGrid />
       </ProjectWrapper>
     </div>
   );

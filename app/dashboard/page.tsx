@@ -37,6 +37,16 @@ export default async function Page() {
                 Current projects
               </button>
             </Link>
+            <Link href='/add-materials'>
+              <button className='bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mt-10'>
+                Add Materials
+              </button>
+            </Link>
+            <Link href='/materials'>
+              <button className='bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mt-10'>
+                View Materials
+              </button>
+            </Link>
           </div>
         </div>
       </section>
