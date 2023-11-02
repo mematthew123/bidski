@@ -48,6 +48,11 @@ function ProjectCard() {
     }
   };
 
+  const handleChange =
+    (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setProject((prev) => ({ ...prev, [key]: e.target.value }));
+    };
+
   return (
     <div className='container h-screen  text-center  mx-auto'>
       <h2 className='text-2xl my-10 font-bold text-gray-800'>
@@ -67,9 +72,7 @@ function ProjectCard() {
             <input
               type='text'
               value={project.name}
-              onChange={(e) =>
-                setProject((prev) => ({ ...prev, name: e.target.value }))
-              }
+              onChange={handleChange('name')}
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             />
           </label>
@@ -79,9 +82,7 @@ function ProjectCard() {
             <input
               type='text'
               value={project.clientName}
-              onChange={(e) =>
-                setProject((prev) => ({ ...prev, clientName: e.target.value }))
-              }
+              onChange={handleChange('clientName')}
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             />
           </label>
@@ -91,9 +92,7 @@ function ProjectCard() {
             <input
               type='text'
               value={project.address}
-              onChange={(e) =>
-                setProject((prev) => ({ ...prev, address: e.target.value }))
-              }
+              onChange={handleChange('address')}
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             />
           </label>
@@ -102,12 +101,7 @@ function ProjectCard() {
             <input
               type='text'
               value={project.projectZipcode}
-              onChange={(e) =>
-                setProject((prev) => ({
-                  ...prev,
-                  projectZipcode: e.target.value,
-                }))
-              }
+              onChange={handleChange('projectZipcode')}
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             />
           </label>
@@ -117,12 +111,7 @@ function ProjectCard() {
             <input
               type='number'
               value={project.squareFeet}
-              onChange={(e) =>
-                setProject((prev) => ({
-                  ...prev,
-                  squareFeet: parseInt(e.target.value),
-                }))
-              }
+              onChange={handleChange('squareFeet')}
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             />
           </label>
@@ -132,12 +121,7 @@ function ProjectCard() {
             <input
               type='checkbox'
               checked={project.needsCleaning}
-              onChange={(e) =>
-                setProject((prev) => ({
-                  ...prev,
-                  needsCleaning: e.target.checked,
-                }))
-              }
+              onChange={handleChange('needsCleaning')}
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             />
           </label>

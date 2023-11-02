@@ -21,7 +21,27 @@ function MaterialsCard() {
   });
 
   const handleAddMaterials = async () => {
-    const { error } = await supabase.from('materials').insert([materials]);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const { error } = await supabase.from('materials').insert([
+      {
+        paint: materials.paint,
+        primer: materials.primer,
+        rollers: materials.rollers,
+        brushes: materials.brushes,
+        tape: materials.tape,
+        caulk: materials.caulk,
+        paint_price: materials.paint_price,
+        primer_price: materials.primer_price,
+        rollers_price: materials.rollers_price,
+        brushes_price: materials.brushes_price,
+        tape_price: materials.tape_price,
+        caulk_price: materials.caulk_price,
+        user_id: user?.id,
+      },
+    ]);
 
     if (error) {
       console.error('Error adding materials:', error);
@@ -43,10 +63,10 @@ function MaterialsCard() {
     }
   };
 
-  const handleChange = (field: any) => (e: any) => {
-    const value = e.target.value;
-    setMaterials((prev) => ({ ...prev, [field]: value }));
-  };
+  const handleChange =
+    (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setMaterials({ ...materials, [key]: e.target.value });
+    };
 
   return (
     <div className='container overflow-y-auto h-screen   mx-auto'>
