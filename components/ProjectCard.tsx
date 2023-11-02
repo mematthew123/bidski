@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from './ui/button';
 
@@ -16,6 +16,10 @@ function ProjectCard() {
   });
 
   const handleAddProject = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     const { error } = await supabase.from('projects').insert([
       {
         project_name: project.name,
@@ -25,6 +29,7 @@ function ProjectCard() {
         paint_type: project.paintType,
         client_name: project.clientName,
         project_zipcode: project.projectZipcode,
+        user_id: user?.id,
       },
     ]);
 

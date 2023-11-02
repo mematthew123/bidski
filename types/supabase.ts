@@ -34,6 +34,54 @@ export interface Database {
   }
   public: {
     Tables: {
+      materials: {
+        Row: {
+          brushes: string | null
+          brushes_price: number | null
+          caulk: string | null
+          caulk_price: number | null
+          material_id: number
+          paint: string | null
+          paint_price: number | null
+          primer: string | null
+          primer_price: number | null
+          rollers: string | null
+          rollers_price: number | null
+          tape: string | null
+          tape_price: number | null
+        }
+        Insert: {
+          brushes?: string | null
+          brushes_price?: number | null
+          caulk?: string | null
+          caulk_price?: number | null
+          material_id?: never
+          paint?: string | null
+          paint_price?: number | null
+          primer?: string | null
+          primer_price?: number | null
+          rollers?: string | null
+          rollers_price?: number | null
+          tape?: string | null
+          tape_price?: number | null
+        }
+        Update: {
+          brushes?: string | null
+          brushes_price?: number | null
+          caulk?: string | null
+          caulk_price?: number | null
+          material_id?: never
+          paint?: string | null
+          paint_price?: number | null
+          primer?: string | null
+          primer_price?: number | null
+          rollers?: string | null
+          rollers_price?: number | null
+          tape?: string | null
+          tape_price?: number | null
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           client_name: string | null
@@ -72,7 +120,14 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      insert_project_and_material: {
+        Args: {
+          project_name: string
+          project_address: string
+          material_name: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

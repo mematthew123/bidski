@@ -6,21 +6,26 @@ import { useRouter } from 'next/router';
 
 const CurrentProjectGrid = () => {
   const [projects, setProjects] = useState([]);
-  const [user, setUser] = useState(null);
+
   const supabase = createClientComponentClient();
 
+  const userProjects = async () => {
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
+
+    if (error) {
+      console.log(error);
+    } else {
+      setProjects(data as any);
+    }
+  };
+
   useEffect(() => {
-    const getProjects = async () => {
-      const { data } = await supabase.from('projects').select();
-      if (data) {
-        setProjects(data as any);
-      }
-    };
+    userProjects();
+  }, []);
 
-    getProjects();
-  }, [supabase, setProjects]);
-
-  console.log(projects.length);
   // When we select
   return (
     // we render the project name here.
