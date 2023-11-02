@@ -1,11 +1,18 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import UpdateMaterialsModal from './UpdateMaterialsModal';
 
 const CurrentMaterialGrid = () => {
   const [materials, setMaterials] = useState([]);
   const supabase = createClientComponentClient();
-
+  const [showModal, setShowModal] = useState(false);
+  // Passing the selected material to the modal for editing
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const openModal = (material: any) => {
+    setSelectedMaterial(material); // Set the selected material
+    setShowModal(true); // Open the modal
+  };
   const userMaterials = async () => {
     const { data, error } = await supabase
       .from('materials')
@@ -38,10 +45,22 @@ const CurrentMaterialGrid = () => {
               <h2>Material List</h2>
               <p>
                 Paint: {material.paint} per gallon cost: {material.paint_price}
+                <button
+                  className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+                  onClick={() => openModal(material)} // Pass the material to the modal
+                >
+                  Update
+                </button>
               </p>
               <p>
                 Primer: {material.primer} per gallon cost:{' '}
                 {material.primer_price}
+                <button
+                  className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+                  onClick={openModal}
+                >
+                  Update
+                </button>
               </p>
               <p>
                 Tape: {material.tape} per roll cost: {material.tape_price}
@@ -62,6 +81,13 @@ const CurrentMaterialGrid = () => {
           </div>
         ))}
       </div>
+      {showModal && (
+        <UpdateMaterialsModal
+          open={showModal}
+          onClose={() => setShowModal(false)}
+          material={selectedMaterial}
+        />
+      )}
     </div>
   );
 };
