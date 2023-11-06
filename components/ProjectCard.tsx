@@ -1,10 +1,30 @@
 'use client';
-import React, { use, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from './ui/button';
 
 function ProjectCard() {
+  const [materials, setMaterials] = useState([]) as any;
   const supabase = createClientComponentClient();
+
+  // Function to fetch materials from the database
+  const fetchMaterials = async () => {
+    const { data, error } = await supabase.from('materials').select('paint'); // Assuming 'paint' is the column with the brands
+
+    if (error) {
+      console.error('Error fetching materials:', error);
+    } else {
+      setMaterials(data);
+    }
+  };
+
+  // Fetch materials on component mount
+  useEffect(() => {
+    fetchMaterials();
+    console.log(materials);
+  }, []);
+  console.log(materials);
+
   const [project, setProject] = useState({
     name: '',
     address: '',
@@ -76,7 +96,6 @@ function ProjectCard() {
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             />
           </label>
-
           <label className='block'>
             Client Name:
             <input
@@ -86,7 +105,6 @@ function ProjectCard() {
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             />
           </label>
-
           <label className='block'>
             Address:
             <input
@@ -105,7 +123,6 @@ function ProjectCard() {
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             />
           </label>
-
           <label className='block'>
             Square Feet:
             <input
@@ -115,7 +132,6 @@ function ProjectCard() {
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             />
           </label>
-
           <label className='block'>
             Needs Cleaning:
             <input
@@ -125,7 +141,6 @@ function ProjectCard() {
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             />
           </label>
-
           <label className='block'>
             Paint Type:
             <select
@@ -136,12 +151,13 @@ function ProjectCard() {
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             >
               <option value=''>Select a paint type</option>
-              <option value='Cheap'>Cheap</option>
-              <option value='Regular'>Regular</option>
-              <option value='Expensive'>Expensive</option>
+              {materials.map((material: { paint: string }) => (
+                <option key={material.paint} value={material.paint}>
+                  {material.paint}
+                </option>
+              ))}
             </select>
           </label>
-
           <Button type='submit'>Add Project</Button>
         </form>
       </div>
