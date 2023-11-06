@@ -18,6 +18,10 @@ function MaterialsCard() {
     brushes_price: null,
     tape_price: null,
     caulk_price: null,
+    drop_sheets: '',
+    drop_sheets_price: null,
+    cleaning_supplies: '',
+    cleaning_supplies_price: null,
   });
 
   const handleAddMaterials = async () => {
@@ -40,6 +44,10 @@ function MaterialsCard() {
         tape_price: materials.tape_price,
         caulk_price: materials.caulk_price,
         user_id: user?.id,
+        drop_sheets: materials.drop_sheets,
+        drop_sheets_price: materials.drop_sheets_price,
+        cleaning_supplies: materials.cleaning_supplies,
+        cleaning_supplies_price: materials.cleaning_supplies_price,
       },
     ]);
 
@@ -59,6 +67,10 @@ function MaterialsCard() {
         brushes_price: null,
         tape_price: null,
         caulk_price: null,
+        drop_sheets: '',
+        drop_sheets_price: null,
+        cleaning_supplies: '',
+        cleaning_supplies_price: null,
       });
     }
   };
@@ -197,6 +209,46 @@ function MaterialsCard() {
             value={materials.caulk_price || ''}
             onChange={handleChange('caulk_price')}
             className='my-4 block w-full border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
+          />
+        </label>
+
+        <label className='block'>
+          Drop Sheets:
+          <input
+            type='text'
+            value={materials.drop_sheets}
+            onChange={handleChange('drop_sheets')}
+            className='my-4 block w-full border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500'
+          />
+        </label>
+
+        <label className='block'>
+          Drop Sheets Price:
+          <input
+            type='number'
+            value={materials.drop_sheets_price || ''}
+            onChange={handleChange('drop_sheets_price')}
+            className='my-4 block w-full border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500'
+          />
+        </label>
+
+        <label className='block'>
+          Cleaning Supplies:
+          <input
+            type='text'
+            value={materials.cleaning_supplies}
+            onChange={handleChange('cleaning_supplies')}
+            className='my-4 block w-full border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500'
+          />
+        </label>
+
+        <label className='block'>
+          Cleaning Supplies Price:
+          <input
+            type='number'
+            value={materials.cleaning_supplies_price || ''}
+            onChange={handleChange('cleaning_supplies_price')}
+            className='my-4 block w-full border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500'
           />
         </label>
 
