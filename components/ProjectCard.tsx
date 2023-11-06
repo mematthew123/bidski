@@ -5,11 +5,15 @@ import { Button } from './ui/button';
 
 function ProjectCard() {
   const [materials, setMaterials] = useState([]) as any;
+  const [calculatedCost, setCalculatedCost] = useState<number | null>(null);
+
   const supabase = createClientComponentClient();
 
   // Function to fetch materials from the database
   const fetchMaterials = async () => {
-    const { data, error } = await supabase.from('materials').select('paint'); // Assuming 'paint' is the column with the brands
+    const { data, error } = await supabase
+      .from('materials')
+      .select('paint, paint_price');
 
     if (error) {
       console.error('Error fetching materials:', error);
@@ -65,6 +69,26 @@ function ProjectCard() {
         clientName: '',
         projectZipcode: '',
       });
+    }
+    // Find the selected material
+    const selectedMaterial = materials.find(
+      (m: any) => m.paint === project.paintType
+    );
+
+    // Ensuring that the paint price is a number
+    const paintPrice = selectedMaterial
+      ? Number(selectedMaterial.paint_price)
+      : 0;
+
+    // Calculate the cost if the paint type is selected and square footage is provided
+    if (selectedMaterial && project.squareFeet && !isNaN(paintPrice)) {
+      const costPerHundredSqFt = paintPrice * 2;
+      const totalCost = (project.squareFeet / 100) * costPerHundredSqFt;
+      setCalculatedCost(totalCost);
+    } else {
+      // Handle the error state appropriately
+      console.error('Invalid input for price or square footage');
+      setCalculatedCost(null);
     }
   };
 
@@ -161,6 +185,11 @@ function ProjectCard() {
           <Button type='submit'>Add Project</Button>
         </form>
       </div>
+      {calculatedCost !== null && (
+        <p>
+          The estimated cost for the project is: ${calculatedCost.toFixed(2)}
+        </p>
+      )}
     </div>
   );
 }
