@@ -73,47 +73,83 @@ const CurrentMaterialGrid = () => {
         {materials.map((material) => (
           <div
             key={material.id}
-            className='bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer'
+            className='bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer'
             onClick={() => openModal(material)}
           >
-            <h3 className='text-lg font-semibold text-gray-800'>
-              {material.paint}
-            </h3>
-            <p className='text-gray-600'>{material.paint_price} per gallon</p>
+            <div className='space-y-4'>
+              <div>
+                <h3 className='text-lg font-semibold text-gray-900'>
+                  {material.paint}
+                </h3>
+                <p className='text-sm text-gray-500'>
+                  Paint Brand - {material.paint_price} per gallon
+                </p>
+              </div>
 
-            <h3 className='text-lg font-semibold text-gray-800'>
-              {material.primer}
-            </h3>
+              <div>
+                <h3 className='text-lg font-semibold text-gray-900'>
+                  {material.primer}
+                </h3>
+                <p className='text-sm text-gray-500'>
+                  Primer Brand - {material.primer_price} per gallon
+                </p>
+              </div>
 
-            <p className='text-gray-600'>{material.primer_price} per gallon</p>
-            <h3 className='text-lg font-semibold text-gray-800'>
-              {material.tape}
-            </h3>
-            <p className='text-gray-600'>{material.tape_price} per roll</p>
-            <h3 className='text-lg font-semibold text-gray-800'>
-              {material.rollers}
-            </h3>
-            <p className='text-gray-600'>{material.rollers_price} per roller</p>
-            <h3 className='text-lg font-semibold text-gray-800'>
-              {material.brushes}
-            </h3>
-            <p className='text-gray-600'>{material.brushes_price} per brush</p>
-            <h3 className='text-lg font-semibold text-gray-800'>
-              {material.drop_sheets}
-            </h3>
-            <p className='text-gray-600'>
-              {material.drop_sheets_price} per sheet
-            </p>
-            <h3 className='text-lg font-semibold text-gray-800'>
-              {material.caulk}
-            </h3>
-            <p className='text-gray-600'>{material.caulk_price} per tube</p>
-            <h3 className='text-lg font-semibold text-gray-800'>
-              {material.cleaning_supplies}
-            </h3>
-            <p className='text-gray-600'>
-              {material.cleaning_supplies_price} per item
-            </p>
+              <div>
+                <h3 className='text-lg font-semibold text-gray-900'>
+                  {material.tape}
+                </h3>
+                <p className='text-sm text-gray-500'>
+                  Tape Brand - {material.tape_price} per roll
+                </p>
+              </div>
+
+              <div>
+                <h3 className='text-lg font-semibold text-gray-900'>
+                  {material.rollers}
+                </h3>
+                <p className='text-sm text-gray-500'>
+                  Rollers Brand - {material.rollers_price} per roller
+                </p>
+              </div>
+
+              <div>
+                <h3 className='text-lg font-semibold text-gray-900'>
+                  {material.brushes}
+                </h3>
+                <p className='text-sm text-gray-500'>
+                  Brushes Brand - {material.brushes_price} per brush
+                </p>
+              </div>
+
+              <div>
+                <h3 className='text-lg font-semibold text-gray-900'>
+                  {material.drop_sheets}
+                </h3>
+                <p className='text-sm text-gray-500'>
+                  Drop Sheets Brand - {material.drop_sheets_price} per sheet
+                </p>
+              </div>
+
+              <div>
+                <h3 className='text-lg font-semibold text-gray-900'>
+                  {material.caulk}
+                </h3>
+                <p className='text-sm text-gray-500'>
+                  Caulk Brand - {material.caulk_price} per tube
+                </p>
+              </div>
+
+              <div>
+                <h3 className='text-lg font-semibold text-gray-900'>
+                  {material.cleaning_supplies}
+                </h3>
+                <p className='text-sm text-gray-500'>
+                  Cleaning Supplies - {material.cleaning_supplies_price} per
+                  item
+                </p>
+              </div>
+            </div>
           </div>
         ))}
       </div>
