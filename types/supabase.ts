@@ -40,6 +40,10 @@ export interface Database {
           brushes_price: number | null
           caulk: string | null
           caulk_price: number | null
+          cleaning_supplies: string | null
+          cleaning_supplies_price: number | null
+          drop_sheets: string | null
+          drop_sheets_price: number | null
           material_id: number
           paint: string | null
           paint_price: number | null
@@ -49,12 +53,17 @@ export interface Database {
           rollers_price: number | null
           tape: string | null
           tape_price: number | null
+          user_id: string | null
         }
         Insert: {
           brushes?: string | null
           brushes_price?: number | null
           caulk?: string | null
           caulk_price?: number | null
+          cleaning_supplies?: string | null
+          cleaning_supplies_price?: number | null
+          drop_sheets?: string | null
+          drop_sheets_price?: number | null
           material_id?: never
           paint?: string | null
           paint_price?: number | null
@@ -64,12 +73,17 @@ export interface Database {
           rollers_price?: number | null
           tape?: string | null
           tape_price?: number | null
+          user_id?: string | null
         }
         Update: {
           brushes?: string | null
           brushes_price?: number | null
           caulk?: string | null
           caulk_price?: number | null
+          cleaning_supplies?: string | null
+          cleaning_supplies_price?: number | null
+          drop_sheets?: string | null
+          drop_sheets_price?: number | null
           material_id?: never
           paint?: string | null
           paint_price?: number | null
@@ -79,6 +93,22 @@ export interface Database {
           rollers_price?: number | null
           tape?: string | null
           tape_price?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      paint_types: {
+        Row: {
+          id: number
+          name: string | null
+        }
+        Insert: {
+          id?: number
+          name?: string | null
+        }
+        Update: {
+          id?: number
+          name?: string | null
         }
         Relationships: []
       }
@@ -92,6 +122,7 @@ export interface Database {
           project_name: string | null
           project_zipcode: number | null
           total_square_feet: number | null
+          user_id: string | null
         }
         Insert: {
           client_name?: string | null
@@ -102,6 +133,7 @@ export interface Database {
           project_name?: string | null
           project_zipcode?: number | null
           total_square_feet?: number | null
+          user_id?: string | null
         }
         Update: {
           client_name?: string | null
@@ -112,6 +144,55 @@ export interface Database {
           project_name?: string | null
           project_zipcode?: number | null
           total_square_feet?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_paint_prices: {
+        Row: {
+          id: number
+          paint_type_id: number | null
+          price: number | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: number
+          paint_type_id?: number | null
+          price?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: number
+          paint_type_id?: number | null
+          price?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_paint_prices_paint_type_id_fkey"
+            columns: ["paint_type_id"]
+            isOneToOne: false
+            referencedRelation: "paint_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_paint_prices_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      users: {
+        Row: {
+          id: string
+        }
+        Insert: {
+          id?: string
+        }
+        Update: {
+          id?: string
         }
         Relationships: []
       }
@@ -176,6 +257,7 @@ export interface Database {
           {
             foreignKeyName: "buckets_owner_fkey"
             columns: ["owner"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -243,12 +325,14 @@ export interface Database {
           {
             foreignKeyName: "objects_bucketId_fkey"
             columns: ["bucket_id"]
+            isOneToOne: false
             referencedRelation: "buckets"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "objects_owner_fkey"
             columns: ["owner"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
