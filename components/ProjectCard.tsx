@@ -3,32 +3,45 @@ import React, { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from './ui/button';
 
+interface Paint {
+  paint_brand: string;
+  paint_price: number;
+  user_id: string;
+}
+
 function ProjectCard() {
   const [materials, setMaterials] = useState([]) as any;
   const [calculatedCost, setCalculatedCost] = useState<number | null>(null);
+  const [paintBrand, setPaintBrand] = useState<Paint[]>([]);
 
   const supabase = createClientComponentClient();
 
-  // Function to fetch materials from the database
-  const fetchMaterials = async () => {
-    const { data, error } = await supabase
-      .from('materials')
-      .select('paint, paint_price');
+  const fetchPaints = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (error) {
-      console.error('Error fetching materials:', error);
+    if (user) {
+      const { data, error } = await supabase
+        .from('paint_types')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error fetching paints:', error);
+      } else {
+        setPaintBrand(data);
+      }
     } else {
-      setMaterials(data);
+      console.error('No user logged in');
+      setPaintBrand([]);
     }
   };
 
-  // Fetch materials on component mount
   useEffect(() => {
-    fetchMaterials();
-    console.log(materials);
+    fetchPaints();
   }, []);
-  console.log(materials);
-
+  console.log(paintBrand);
   const [project, setProject] = useState({
     name: '',
     address: '',
@@ -175,9 +188,9 @@ function ProjectCard() {
               className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
             >
               <option value=''>Select a paint type</option>
-              {materials.map((material: { paint: string }) => (
-                <option key={material.paint} value={material.paint}>
-                  {material.paint}
+              {paintBrand.map((paint) => (
+                <option key={paint.paint_brand} value={paint.paint_brand}>
+                  {paint.paint_brand}
                 </option>
               ))}
             </select>

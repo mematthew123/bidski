@@ -17,23 +17,28 @@ function PaintsCard() {
 
   // Function to fetch paints from the database
   const fetchPaints = async () => {
+    // Check if the user is logged in
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const { data, error } = await supabase.from('paint_types').select('*');
+    if (user) {
+      const { data, error } = await supabase
+        .from('paint_types')
+        .select('*')
+        .eq('user_id', user.id); // Filter paints by the logged-in user's ID
 
-    if (error) {
-      console.error('Error fetching paints:', error);
+      if (error) {
+        console.error('Error fetching paints:', error);
+      } else {
+        setPaints(data);
+      }
     } else {
-      setPaints(data);
+      // Handle the case where there is no user logged in
+      console.error('No user logged in');
+      setPaints([]); // Clear the paints if no user is logged in
     }
   };
-
-  // Fetch paints on component mount
-  useEffect(() => {
-    fetchPaints();
-  }, []);
 
   const handleAddPaint = async (event: React.FormEvent) => {
     event.preventDefault(); // Prevent the form from refreshing the page
