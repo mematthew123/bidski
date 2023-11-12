@@ -28,19 +28,20 @@ const CurrentProjectGrid = () => {
   // When we select
   return (
     // we render the project name here.
-    <div className='container mx-auto'>
-      <h2 className='text-2xl font-bold text-gray-800'> Current Projects</h2>
+    <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
+      <h2 className='text-3xl sm:text-4xl font-bold text-gray-800 my-6'>
+        Current Projects
+      </h2>
 
-      <div className='w-full mx-auto mt-10 lg:mt-10 grid lg:grid-cols-2 h-screen md:h-96  gap-4'>
+      <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr'>
         {projects.map((project: any) => (
-          <Link href={`/project/${project.project_name}`}>
-            <div
-              key={project.name}
-              className='bg-gray-100 h-full cursor-auto flex items-center justify-center'
-            >
-              <div className='grid grid-cols-1 gap-4'>
-                <h2>Project Name</h2>
-                <p className='text-gray-600'> {project.project_name}</p>
+          <Link href={`/project/${project.project_name}`} key={project.name}>
+            <div className='bg-gray-100 p-6 rounded-lg shadow-lg flex flex-col justify-between hover:bg-gray-200 transition duration-300'>
+              <div>
+                <h3 className='text-xl font-semibold text-gray-700'>
+                  {project.project_name}
+                </h3>
+                <p className='text-gray-600 mt-2'>{project.total_cost}</p>
               </div>
             </div>
           </Link>

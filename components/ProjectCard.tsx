@@ -57,6 +57,26 @@ function ProjectCard() {
       data: { user },
     } = await supabase.auth.getUser();
 
+    // Find the selected material
+    const selectedMaterial = paintBrand.find(
+      (m) => m.paint_brand === project.paintType
+    );
+
+    // Ensuring that the paint price is a number
+    const paintPrice = selectedMaterial
+      ? Number(selectedMaterial.paint_price)
+      : 0;
+
+    // Calculate the cost if the paint type is selected and square footage is provided
+    let totalCost = null;
+    if (selectedMaterial && project.squareFeet && !isNaN(paintPrice)) {
+      const costPerHundredSqFt = paintPrice * 2;
+      totalCost = (project.squareFeet / 100) * costPerHundredSqFt;
+    } else {
+      console.error('Invalid input for price or square footage');
+    }
+
+    // Insert the project with total_cost
     const { error } = await supabase.from('projects').insert([
       {
         project_name: project.name,
@@ -67,6 +87,7 @@ function ProjectCard() {
         client_name: project.clientName,
         project_zipcode: project.projectZipcode,
         user_id: user?.id,
+        total_cost: totalCost, // Include the calculated cost here
       },
     ]);
 
@@ -82,32 +103,16 @@ function ProjectCard() {
         clientName: '',
         projectZipcode: '',
       });
-    }
-    // Find the selected material
-    const selectedMaterial = materials.find(
-      (m: any) => m.paint === project.paintType
-    );
-
-    // Ensuring that the paint price is a number
-    const paintPrice = selectedMaterial
-      ? Number(selectedMaterial.paint_price)
-      : 0;
-
-    // Calculate the cost if the paint type is selected and square footage is provided
-    if (selectedMaterial && project.squareFeet && !isNaN(paintPrice)) {
-      const costPerHundredSqFt = paintPrice * 2;
-      const totalCost = (project.squareFeet / 100) * costPerHundredSqFt;
-      setCalculatedCost(totalCost);
-    } else {
-      // Handle the error state appropriately
-      console.error('Invalid input for price or square footage');
-      setCalculatedCost(null);
+      setCalculatedCost(totalCost); // Update the state if needed
     }
   };
 
   const handleChange =
     (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      setProject((prev) => ({ ...prev, [key]: e.target.value }));
+      setProject((prev) => ({
+        ...prev,
+        [key]: key === 'squareFeet' ? Number(e.target.value) : e.target.value,
+      }));
     };
 
   return (

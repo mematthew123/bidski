@@ -92,26 +92,6 @@ function MaterialsCard() {
           handleAddMaterials();
         }}
       >
-        {/* Repeat this block for each material and price */}
-        <label className='block'>
-          Paint:
-          <input
-            type='text'
-            value={materials.paint}
-            onChange={handleChange('paint')}
-            className='my-4 block w-full border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
-          />
-        </label>
-        <label className='block'>
-          Paint Price:
-          <input
-            type='number'
-            value={materials.paint_price || ''}
-            onChange={handleChange('paint_price')}
-            className='my-4 block w-full border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
-          />
-        </label>
-        {/* ... repeat for other materials and prices ... */}
         <label className='block'>
           Primer:
           <input

@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 export const dynamic = 'force-dynamic';
 
 import SingleProjectCard from '@/components/SingleProjectCard';
+import ProjectWrapper from '@/components/ProjectWrapper';
 
 export default async function page() {
   const supabase = createServerComponentClient({ cookies });
@@ -32,7 +33,9 @@ export default async function page() {
 
   return (
     <div>
-      <SingleProjectCard />
+      <ProjectWrapper>
+        <SingleProjectCard />
+      </ProjectWrapper>
     </div>
   );
 }
