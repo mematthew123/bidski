@@ -1,31 +1,40 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-
 import { useParams } from 'next/navigation';
+
 const SingleProjectCard = () => {
   const [singleProject, setSingleProject] = useState([]);
-  const [user, setUser] = useState(null);
   const supabase = createClientComponentClient();
   const { slug } = useParams();
 
   useEffect(() => {
     const getSingleProject = async () => {
       const { data } = await supabase.from('projects').select();
-      // we want to filter the data to only show the project that matches the slug.
       const filteredData = data?.filter(
-        (project: any) => project.project_name === slug
+        (project) => project.project_name === slug
       );
-      console.log(filteredData);
-      if (data) {
+      if (filteredData) {
+        // Fetch the image URLs for each project
+        for (const project of filteredData) {
+          if (project.project_image) {
+            try {
+              const { data: urlData }: { data: { publicUrl: string } } =
+                supabase.storage
+                  .from('bidski')
+                  .getPublicUrl(project.project_image);
+              project.project_image_url = urlData.publicUrl;
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        }
         setSingleProject(filteredData as any);
       }
     };
     getSingleProject();
-  }, [supabase, setSingleProject]);
+  }, [slug]);
 
-  console.log(singleProject);
-  // When we select
   return (
     <>
       {singleProject.map((project: any) => (
@@ -83,6 +92,13 @@ const SingleProjectCard = () => {
               <span className='font-semibold'>Total Cost:</span>{' '}
               {project.total_cost}
             </p>
+          </div>
+          <div className='flex justify-center mt-4'>
+            <img
+              src={project.project_image_url}
+              alt={project.project_name}
+              className='w-1/2'
+            />
           </div>
         </div>
       ))}
