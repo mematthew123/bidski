@@ -10,16 +10,19 @@ export default async function Index() {
   } = await supabase.auth.getUser();
 
   return (
-    <div className='w-full h-screen flex justify-center bg-amber-500'>
-      <div className='flex flex-col justify-center items-center h-full'>
-        <h1 className='text-5xl font-bold text-white'>Bidski</h1>
-        <h1 className='text-3xl font-bold text-white'>
+    <div className='w-full h-screen flex justify-center items-center bg-amber-500'>
+      <div className='text-center'>
+        <h1 className='text-6xl font-extrabold text-white mb-4'>Bidski</h1>
+        <p className='text-2xl text-white mb-8'>
           The best way to manage your projects
-        </h1>
+        </p>
         {user ? (
           // if user is logged in, route to dashboard
-          <div className='flex flex-col justify-center items-center h-full'>
-            <a href='/dashboard' className='py-2 px-3 rounded-md text-white'>
+          <div className='space-y-4'>
+            <a
+              href='/dashboard'
+              className='inline-block bg-indigo-600 py-3 px-6 rounded-md text-white text-lg font-medium hover:bg-indigo-700 transition duration-300'
+            >
               Dashboard
             </a>
             <LogoutButton />
@@ -27,7 +30,7 @@ export default async function Index() {
         ) : (
           <a
             href='/login'
-            className='py-2 px-3 rounded-md text-gray-600 hover:text-indigo-600'
+            className='inline-block bg-white py-3 px-6 rounded-md text-gray-800 text-lg font-medium hover:bg-gray-100 transition duration-300'
           >
             Login
           </a>
