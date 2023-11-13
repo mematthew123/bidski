@@ -10,7 +10,6 @@ interface Paint {
 }
 
 function ProjectCard() {
-  const [materials, setMaterials] = useState([]) as any;
   const [calculatedCost, setCalculatedCost] = useState<number | null>(null);
   const [paintBrand, setPaintBrand] = useState<Paint[]>([]);
 
@@ -47,10 +46,38 @@ function ProjectCard() {
     address: '',
     squareFeet: 0,
     needsCleaning: false,
-    paintType: 'Regular', // Default to Regular
+    paintType: 'What type of paint?',
     clientName: '',
     projectZipcode: '',
+    project_image: '',
   });
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const filePath = `project-images/${Date.now()}_${file.name}`;
+    const { data, error } = await supabase.storage
+      .from('bidski')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (error) {
+      console.error('Error uploading file:', error);
+      return;
+    }
+
+    console.log('File path:', filePath);
+    setProject((prev) => {
+      const updatedProject = { ...prev, project_image: filePath };
+      console.log('Updated project state:', updatedProject);
+      return updatedProject;
+    });
+  };
 
   const handleAddProject = async () => {
     const {
@@ -75,6 +102,7 @@ function ProjectCard() {
     } else {
       console.error('Invalid input for price or square footage');
     }
+    console.log('Project data being inserted:', project); // Log the project data
 
     // Insert the project with total_cost
     const { error } = await supabase.from('projects').insert([
@@ -88,8 +116,10 @@ function ProjectCard() {
         project_zipcode: project.projectZipcode,
         user_id: user?.id,
         total_cost: totalCost, // Include the calculated cost here
+        project_image: project.project_image, // Include the image path here
       },
     ]);
+    console.log('Project data before submission:', project);
 
     if (error) {
       console.error('Error adding project:', error);
@@ -102,6 +132,7 @@ function ProjectCard() {
         paintType: 'Regular',
         clientName: '',
         projectZipcode: '',
+        project_image: '',
       });
       setCalculatedCost(totalCost); // Update the state if needed
     }
@@ -199,6 +230,7 @@ function ProjectCard() {
                 </option>
               ))}
             </select>
+            <input type='file' onChange={handleFileChange} />
           </label>
           <Button type='submit'>Add Project</Button>
         </form>
