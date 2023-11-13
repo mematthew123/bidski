@@ -79,11 +79,13 @@ function PaintsCard() {
     }
   };
 
+  useEffect(() => {
+    fetchPaints();
+  }, []);
+
   return (
     <div className='container bg-yellow-200  h-screen text-center mx-auto'>
-      <h2 className='text-2xl my-10 font-bold text-gray-800'>
-        Manage Paint Types
-      </h2>
+      <h2 className='text-2xl  font-bold text-gray-800'>Manage Paint Types</h2>
       <div className='mx-auto flex justify-center max-h-[80vh] overflow-y-auto p-4 rounded-md '>
         {/* Form to add new paint */}
         <form
