@@ -79,15 +79,6 @@ const CurrentMaterialGrid = () => {
             <div className='space-y-4'>
               <div>
                 <h3 className='text-lg font-semibold text-gray-900'>
-                  {material.paint}
-                </h3>
-                <p className='text-sm text-gray-500'>
-                  Paint Brand - {material.paint_price} per gallon
-                </p>
-              </div>
-
-              <div>
-                <h3 className='text-lg font-semibold text-gray-900'>
                   {material.primer}
                 </h3>
                 <p className='text-sm text-gray-500'>
@@ -139,6 +130,13 @@ const CurrentMaterialGrid = () => {
                   Caulk Brand - {material.caulk_price} per tube
                 </p>
               </div>
+              {showModal && selectedMaterial && (
+                <UpdateMaterialsModal
+                  material={selectedMaterial}
+                  onClose={() => setShowModal(false)}
+                  open={showModal}
+                />
+              )}
 
               <div>
                 <h3 className='text-lg font-semibold text-gray-900'>
@@ -153,13 +151,6 @@ const CurrentMaterialGrid = () => {
           </div>
         ))}
       </div>
-      {showModal && selectedMaterial && (
-        <UpdateMaterialsModal
-          material={selectedMaterial}
-          onClose={() => setShowModal(false)}
-          open={false}
-        />
-      )}
     </div>
   );
 };
