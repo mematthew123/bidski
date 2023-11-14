@@ -49,15 +49,28 @@ const useMaterials = () => {
     fetchMaterials();
   }, []);
 
-  return { materials, loading, error };
+  return { setMaterials, materials, loading, error };
 };
 
 const CurrentMaterialGrid = () => {
-  const { materials, loading, error } = useMaterials();
+  const { materials, setMaterials, loading, error } = useMaterials(); // Destructure setMaterials
   const [showModal, setShowModal] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(
     null
   );
+
+  const updateMaterialsInView = async () => {
+    const supabase = createClientComponentClient();
+    const { data, error } = await supabase
+      .from('materials')
+      .select('*')
+      .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
+    if (error) {
+      console.error('Error fetching materials:', error);
+    } else {
+      setMaterials(data); // Update the state with the new data
+    }
+  };
 
   const openModal = (material: Material) => {
     setSelectedMaterial(material);
@@ -135,6 +148,7 @@ const CurrentMaterialGrid = () => {
                   material={selectedMaterial}
                   onClose={() => setShowModal(false)}
                   open={showModal}
+                  onUpdate={updateMaterialsInView}
                 />
               )}
 

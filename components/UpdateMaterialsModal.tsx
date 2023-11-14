@@ -7,12 +7,14 @@ type Props = {
   open: boolean;
   onClose: () => void;
   material: any;
+  onUpdate: () => void;
 };
 
 export default function UpdateMaterialsModal({
   open,
   onClose,
   material,
+  onUpdate,
 }: Props) {
   const [primer, setPrimer] = useState('');
   const [primerPrice, setPrimerPrice] = useState(0);
@@ -79,6 +81,7 @@ export default function UpdateMaterialsModal({
 
     if (!error) {
       onClose();
+      onUpdate(); // Call the callback function to update materials in view
     } else if (error) {
       console.error('Error updating materials:', error);
     }
