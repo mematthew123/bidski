@@ -49,6 +49,7 @@ export default function UpdateMaterialsModal({
       setCleaningSuppliesPrice(material.cleaning_supplies_price);
     }
   }, [material]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -76,7 +77,9 @@ export default function UpdateMaterialsModal({
 
     console.log('User:', user);
 
-    if (error) {
+    if (!error) {
+      onClose();
+    } else if (error) {
       console.error('Error updating materials:', error);
     }
   };
