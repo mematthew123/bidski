@@ -7,7 +7,14 @@ const SingleProjectCard = () => {
   const [singleProject, setSingleProject] = useState([]);
   const supabase = createClientComponentClient();
   const { slug } = useParams();
+  const [showDeleteProjectModal, setShowDeleteProjectModal] = useState(false);
 
+  // Toggle Modal Visibility
+  const toggleDeleteModal = () => {
+    setShowDeleteProjectModal(!showDeleteProjectModal);
+  };
+
+  // Get Single Project
   useEffect(() => {
     const getSingleProject = async () => {
       const { data } = await supabase.from('projects').select();
@@ -35,6 +42,20 @@ const SingleProjectCard = () => {
     getSingleProject();
   }, [slug]);
 
+  // Delete Project
+
+  const handleDeleteProject = async (projectName: string) => {
+    const { data, error } = await supabase
+      .from('projects')
+      .delete()
+      .match({ project_name: projectName });
+    if (error) {
+      console.error(error);
+    } else {
+      console.log(data);
+    }
+  };
+
   return (
     <>
       {singleProject.map((project: any) => (
@@ -42,6 +63,31 @@ const SingleProjectCard = () => {
           key={project.name}
           className='bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out'
         >
+          {/* Modal */}
+          {showDeleteProjectModal && (
+            <div className='bg-white min-h-screen rounded-lg shadow-lg p-4'>
+              <h2 className='text-2xl font-bold text-blue-800 mb-2'>
+                Delete Project
+              </h2>
+              <p className='text-gray-700'>
+                Are you sure you want to delete this project?
+              </p>
+              <div className='flex justify-end mt-4'>
+                <button
+                  onClick={() => handleDeleteProject(project.project_name)}
+                  className='bg-red-800 text-white font-semibold px-4 py-2 rounded-lg'
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={toggleDeleteModal}
+                  className='bg-blue-800 text-white font-semibold px-4 py-2 rounded-lg ml-4'
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 items-start'>
             {/* Text Content */}
             <div>
@@ -69,6 +115,7 @@ const SingleProjectCard = () => {
                   <span className='font-semibold'>Square Feet:</span>{' '}
                   {project.total_square_feet}
                 </p>
+
                 <p>
                   {' '}
                   <span className='font-semibold'>Address:</span>{' '}
@@ -111,10 +158,15 @@ const SingleProjectCard = () => {
               />
             </div>
           </div>
+          <button
+            onClick={toggleDeleteModal}
+            className='bg-red-800 text-white font-semibold px-4 py-2 rounded-lg mt-4'
+          >
+            Delete Project
+          </button>
         </div>
       ))}
     </>
   );
 };
-
 export default SingleProjectCard;
