@@ -87,7 +87,6 @@ const CurrentMaterialGrid = () => {
           <div
             key={material.id}
             className='bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer'
-            onClick={() => openModal(material)}
           >
             <div className='space-y-4'>
               <div>
@@ -162,6 +161,12 @@ const CurrentMaterialGrid = () => {
                 </p>
               </div>
             </div>
+            <button
+              className='bg-blue-800 text-white mt-4 font-semibold px-4 py-2 rounded-lg ml-4'
+              onClick={() => openModal(material)}
+            >
+              Update Materials
+            </button>
           </div>
         ))}
       </div>
