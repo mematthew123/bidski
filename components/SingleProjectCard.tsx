@@ -2,12 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const SingleProjectCard = () => {
   const [singleProject, setSingleProject] = useState([]);
+  const [deleteSuccess, setDeleteSuccess] = useState(false); // New state for deletion success
   const supabase = createClientComponentClient();
   const { slug } = useParams();
   const [showDeleteProjectModal, setShowDeleteProjectModal] = useState(false);
+  const router = useRouter(); // useRouter hook for navigation
 
   // Toggle Modal Visibility
   const toggleDeleteModal = () => {
@@ -53,6 +56,10 @@ const SingleProjectCard = () => {
       console.error(error);
     } else {
       console.log(data);
+      setDeleteSuccess(true); // Set success state
+      setTimeout(() => {
+        router.push('/current-projects'); // Redirect after a short delay
+      }, 3000);
     }
   };
 
@@ -66,26 +73,36 @@ const SingleProjectCard = () => {
           {/* Modal */}
           {showDeleteProjectModal && (
             <div className='bg-white min-h-screen rounded-lg shadow-lg p-4'>
-              <h2 className='text-2xl font-bold text-blue-800 mb-2'>
-                Delete Project
-              </h2>
-              <p className='text-gray-700'>
-                Are you sure you want to delete this project?
-              </p>
-              <div className='flex justify-end mt-4'>
-                <button
-                  onClick={() => handleDeleteProject(project.project_name)}
-                  className='bg-red-800 text-white font-semibold px-4 py-2 rounded-lg'
-                >
-                  Delete
-                </button>
-                <button
-                  onClick={toggleDeleteModal}
-                  className='bg-blue-800 text-white font-semibold px-4 py-2 rounded-lg ml-4'
-                >
-                  Cancel
-                </button>
-              </div>
+              {!deleteSuccess ? (
+                // Confirmation message
+                <>
+                  <h2 className='text-2xl font-bold text-blue-800 mb-2'>
+                    Delete Project
+                  </h2>
+                  <p className='text-gray-700'>
+                    Are you sure you want to delete this project?
+                  </p>
+                  <div className='flex justify-end mt-4'>
+                    <button
+                      onClick={() => handleDeleteProject(project.project_name)}
+                      className='bg-red-800 text-white font-semibold px-4 py-2 rounded-lg'
+                    >
+                      Delete
+                    </button>
+                    <button
+                      onClick={toggleDeleteModal}
+                      className='bg-blue-800 text-white font-semibold px-4 py-2 rounded-lg ml-4'
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                // Success message
+                <div className='bg-green-500 text-white font-semibold px-4 py-2 rounded-lg'>
+                  Project successfully deleted!
+                </div>
+              )}
             </div>
           )}
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 items-start'>
