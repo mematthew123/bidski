@@ -134,7 +134,7 @@ function ProjectCard() {
         projectZipcode: '',
         project_image: '',
       });
-      setCalculatedCost(totalCost); // Update the state if needed
+      setCalculatedCost(totalCost);
     }
   };
 
@@ -147,99 +147,119 @@ function ProjectCard() {
     };
 
   return (
-    <div className='container h-screen  text-center  mx-auto'>
-      <h2 className='text-2xl my-10 font-bold text-gray-800'>
-        {' '}
+    <div className='container items-center flex-col flex mx-auto max-h-[80vh] overflow-y-auto p-4 rounded-md text-center'>
+      <h2 className='text-4xl font-bold text-gray-800 my-10'>
         Start a Project
       </h2>
-      <div className='mx-auto flex justify-center  max-h-[80vh] overflow-y-auto p-4 rounded-md '>
-        <form
-          className='w-full max-w-sm my-10 p-4 rounded-md'
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleAddProject();
-          }}
+      <form
+        className='w-full max-w-md my-10 p-6 bg-white rounded-lg shadow space-y-4'
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleAddProject();
+        }}
+      >
+        <label className='block text-lg font-medium'>
+          Project Name:
+          <input
+            type='text'
+            value={project.name}
+            onChange={handleChange('name')}
+            className='mt-2 block w-full border border-gray-300 h-12 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'
+          />
+        </label>
+        <label className='block text-lg font-medium'>
+          Client Name:
+          <input
+            type='text'
+            value={project.clientName}
+            onChange={handleChange('clientName')}
+            className='mt-2 block w-full border border-gray-300 h-12 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'
+          />
+        </label>
+        <label className='block text-lg font-medium'>
+          Project Zipcode:
+          <input
+            type='text'
+            value={project.projectZipcode}
+            onChange={handleChange('projectZipcode')}
+            className='mt-2 block w-full border border-gray-300 h-12 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'
+          />
+        </label>
+        <label className='block text-lg font-medium'>
+          Address:
+          <input
+            type='text'
+            value={project.address}
+            onChange={handleChange('address')}
+            className='mt-2 block w-full border border-gray-300 h-12 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'
+          />
+        </label>
+
+        <label className='block text-lg font-medium'>
+          Square Feet:
+          <input
+            type='number'
+            value={project.squareFeet}
+            onChange={handleChange('squareFeet')}
+            className='mt-2 block w-full border border-gray-300 h-12 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'
+          />
+        </label>
+
+        <label className='block text-lg font-medium'>
+          Needs Cleaning:
+          <input
+            type='checkbox'
+            checked={project.needsCleaning}
+            onChange={(e) =>
+              setProject((prev) => ({
+                ...prev,
+                needsCleaning: e.target.checked,
+              }))
+            }
+            className='mt-2 block w-full border border-gray-300 h-12 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'
+          />
+        </label>
+
+        <label className='block text-lg font-medium'>
+          Paint Type:
+          <select
+            value={project.paintType}
+            onChange={(e) =>
+              setProject((prev) => ({ ...prev, paintType: e.target.value }))
+            }
+            className='mt-2 block w-full border border-gray-300 h-12 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'
+          >
+            {/* Options */}
+            <option value=''>Select a paint type</option>
+            {paintBrand.map((paint) => (
+              <option key={paint.paint_brand} value={paint.paint_brand}>
+                {paint.paint_brand}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className='block text-lg font-medium'>
+          Attach File:
+          <input
+            type='file'
+            onChange={handleFileChange}
+            className='block w-full text-sm text-gray-500'
+          />
+        </label>
+        <button
+          type='submit'
+          className='w-full bg-indigo-600 text-white py-3 px-4 rounded hover:bg-indigo-700 mt-4'
         >
-          <label className='block'>
-            Project Name:
-            <input
-              type='text'
-              value={project.name}
-              onChange={handleChange('name')}
-              className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
-            />
-          </label>
-          <label className='block'>
-            Client Name:
-            <input
-              type='text'
-              value={project.clientName}
-              onChange={handleChange('clientName')}
-              className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
-            />
-          </label>
-          <label className='block'>
-            Address:
-            <input
-              type='text'
-              value={project.address}
-              onChange={handleChange('address')}
-              className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
-            />
-          </label>
-          <label className='block'>
-            Zipcode:
-            <input
-              type='text'
-              value={project.projectZipcode}
-              onChange={handleChange('projectZipcode')}
-              className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
-            />
-          </label>
-          <label className='block'>
-            Square Feet:
-            <input
-              type='number'
-              value={project.squareFeet}
-              onChange={handleChange('squareFeet')}
-              className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
-            />
-          </label>
-          <label className='block'>
-            Needs Cleaning:
-            <input
-              type='checkbox'
-              checked={project.needsCleaning}
-              onChange={handleChange('needsCleaning')}
-              className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
-            />
-          </label>
-          <label className='block'>
-            Paint Type:
-            <select
-              value={project.paintType}
-              onChange={(e) =>
-                setProject((prev) => ({ ...prev, paintType: e.target.value }))
-              }
-              className='my-4 block w-full  border-gray-800 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-lg'
-            >
-              <option value=''>Select a paint type</option>
-              {paintBrand.map((paint) => (
-                <option key={paint.paint_brand} value={paint.paint_brand}>
-                  {paint.paint_brand}
-                </option>
-              ))}
-            </select>
-            <input type='file' onChange={handleFileChange} />
-          </label>
-          <Button type='submit'>Add Project</Button>
-        </form>
-      </div>
-      {calculatedCost !== null && (
-        <p>
-          The estimated cost for the project is: ${calculatedCost.toFixed(2)}
-        </p>
-      )}
+          Add Project
+        </button>
+        {calculatedCost !== null && (
+          <p className='text-xl mt-4'>
+            The estimated cost for the project is:{' '}
+            <span className='font-semibold'>${calculatedCost.toFixed(2)}</span>
+          </p>
+        )}
+      </form>
     </div>
   );
 }

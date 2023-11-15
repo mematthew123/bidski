@@ -19,10 +19,13 @@ export default async function Page() {
 
   return (
     <ProjectWrapper>
-      <section className='h-screen flex  justify-center items-center'>
+      <section className='h-screen flex  justify-center items-center '>
         <div className=' items-center text-center'>
-          <h1 className='text-3xl font-bold text-purple-600'>
-            Welcome{user ? `, ${user.email}` : ''}!
+          <h1 className=' text-lg md:text-3xl font-bold text-purple-600'>
+            Welcome
+          </h1>
+          <h1 className=' text-lg md:text-3xl font-bold text-purple-600'>
+            {user ? user?.email : 'User'}
           </h1>
           <h1 className='text-3xl font-bold my-10 text-purple-600'>
             What would you like to do?
@@ -39,6 +42,9 @@ export default async function Page() {
             </Link>
             <Link href='/materials'>
               <Button> View materials</Button>
+            </Link>
+            <Link href='/paints'>
+              <Button> View paints</Button>
             </Link>
           </div>
         </div>

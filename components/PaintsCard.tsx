@@ -84,47 +84,52 @@ function PaintsCard() {
   }, []);
 
   return (
-    <div className='container bg-yellow-200  h-screen text-center mx-auto'>
-      <h2 className='text-2xl  font-bold text-gray-800'>Manage Paint Types</h2>
-      <div className='mx-auto flex justify-center max-h-[80vh] overflow-y-auto p-4 rounded-md '>
-        {/* Form to add new paint */}
+    <div className='container mx-auto bg-gray-100 p-6 h-screen'>
+      <h2 className='text-3xl font-bold text-gray-800 mb-6 text-center'>
+        Manage Paint Types
+      </h2>
+      <div className='flex justify-center mx-auto max-h-[80vh] overflow-y-auto p-4 rounded-md'>
         <form
-          className='flex flex-col w-1/3'
-          onSubmit={handleAddPaint} // Attach the handleAddPaint function to form submission
+          className='flex flex-col w-full md:w-1/2 lg:w-1/3 space-y-4'
+          onSubmit={handleAddPaint}
         >
-          <label className='text-gray-800 font-bold'>Name</label>
+          <label className='font-semibold'>Name</label>
           <input
-            className='border border-gray-400 p-2 rounded-md'
+            className='border border-gray-300 p-3 rounded-md focus:border-indigo-500 focus:ring-indigo-500'
             value={newPaintBrand}
-            onChange={(e) => setNewPaintBrand(e.target.value)} // Update the state when the input changes
+            onChange={(e) => setNewPaintBrand(e.target.value)}
           />
-          <label className='text-gray-800 font-bold'>Price</label>
+          <label className='font-semibold'>Price</label>
           <input
-            type='number' // Ensure that only numbers can be entered
-            className='border border-gray-400 p-2 rounded-md'
+            type='number'
+            className='border border-gray-300 p-3 rounded-md focus:border-indigo-500 focus:ring-indigo-500'
             value={newPaintPrice}
-            onChange={(e) => setNewPaintPrice(e.target.value)} // Update the state when the input changes
+            onChange={(e) => setNewPaintPrice(e.target.value)}
           />
-          <Button type='submit' className='mt-2'>
+          <button
+            type='submit'
+            className='mt-2 bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700'
+          >
             Add
-          </Button>{' '}
+          </button>
         </form>
-
-        {/* List of paints */}
       </div>
-      <div className='flex mx-auto justify-center'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6'>
         {paints.map((paint) => (
-          <div key={paint.user_id}>
-            <label className='text-gray-800 font-bold'>Brand</label>
+          <div
+            key={paint.user_id}
+            className='bg-white shadow-md rounded-lg p-4'
+          >
+            <label className='text-gray-800 font-semibold'>Brand</label>
             <p>{paint.paint_brand}</p>
-            <label className='text-gray-800 font-bold'>Price</label>
+            <label className='text-gray-800 font-semibold'>Price</label>
             <p>{paint.paint_price}</p>
-            <Button
-              onClick={() => handleDeletePaint(paint.paint_brand)} // Pass paint_brand to the delete function
-              className='mt-2'
+            <button
+              onClick={() => handleDeletePaint(paint.paint_brand)}
+              className='mt-2 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700'
             >
               Delete
-            </Button>
+            </button>
           </div>
         ))}
       </div>
