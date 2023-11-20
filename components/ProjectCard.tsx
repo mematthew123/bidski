@@ -12,8 +12,33 @@ interface Paint {
 function ProjectCard() {
   const [calculatedCost, setCalculatedCost] = useState<number | null>(null);
   const [paintBrand, setPaintBrand] = useState<Paint[]>([]);
+  const [primerPrice, setPrimerPrice] = useState<number | null>(null);
+  const [tapePrice, setTapePrice] = useState<number | null>(null);
 
   const supabase = createClientComponentClient();
+
+  const fetchMaterials = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      const { data, error } = await supabase
+        .from('materials')
+        .select('primer_price, tape_price')
+        .eq('user_id', user.id)
+        .single(); // Assuming each user has only one materials row
+
+      if (error) {
+        console.error('Error fetching materials:', error);
+      } else {
+        setPrimerPrice(data?.primer_price);
+        setTapePrice(data?.tape_price);
+      }
+    } else {
+      console.error('No user logged in');
+    }
+  };
 
   const fetchPaints = async () => {
     const {
@@ -39,6 +64,7 @@ function ProjectCard() {
 
   useEffect(() => {
     fetchPaints();
+    fetchMaterials();
   }, []);
   console.log(paintBrand);
   const [project, setProject] = useState({
@@ -93,11 +119,19 @@ function ProjectCard() {
     const paintPrice = selectedMaterial
       ? Number(selectedMaterial.paint_price)
       : 0;
+    // Calculate the primer cost at 1 bucket per 100 sq ft
+    let primerCost = 0;
+    if (primerPrice && project.squareFeet) {
+      primerCost = (project.squareFeet / 100) * primerPrice;
+    }
+
+    // Calculate the tape cost at 2 rolls per 100 sq ft
+    const tapeCost = tapePrice ? tapePrice : 0;
 
     // Calculate the cost if the paint type is selected and square footage is provided
     let totalCost = null;
     if (selectedMaterial && project.squareFeet && !isNaN(paintPrice)) {
-      const costPerHundredSqFt = paintPrice * 2;
+      const costPerHundredSqFt = paintPrice * 2 + primerCost + tapeCost * 2;
       totalCost = (project.squareFeet / 100) * costPerHundredSqFt;
     } else {
       console.error('Invalid input for price or square footage');
