@@ -14,6 +14,9 @@ function ProjectCard() {
   const [paintBrand, setPaintBrand] = useState<Paint[]>([]);
   const [primerPrice, setPrimerPrice] = useState<number | null>(null);
   const [tapePrice, setTapePrice] = useState<number | null>(null);
+  const [rollerPrice, setRollerPrice] = useState<number | null>(null);
+  const [brushPrice, setBrushPrice] = useState<number | null>(null);
+  const [caulkPrice, setCaulkPrice] = useState<number | null>(null);
 
   const supabase = createClientComponentClient();
 
@@ -25,7 +28,9 @@ function ProjectCard() {
     if (user) {
       const { data, error } = await supabase
         .from('materials')
-        .select('primer_price, tape_price')
+        .select(
+          'primer_price, tape_price, rollers_price, brushes_price, caulk_price'
+        )
         .eq('user_id', user.id)
         .single(); // Assuming each user has only one materials row
 
@@ -34,6 +39,9 @@ function ProjectCard() {
       } else {
         setPrimerPrice(data?.primer_price);
         setTapePrice(data?.tape_price);
+        setRollerPrice(data?.rollers_price);
+        setBrushPrice(data?.brushes_price);
+        setCaulkPrice(data?.caulk_price);
       }
     } else {
       console.error('No user logged in');
@@ -114,6 +122,16 @@ function ProjectCard() {
     const selectedMaterial = paintBrand.find(
       (m) => m.paint_brand === project.paintType
     );
+    let additionalCosts = 0;
+    if (project.squareFeet) {
+      const factor = project.squareFeet / 100; // For each 100 sq ft
+      additionalCosts += factor * (rollerPrice ?? 0);
+      additionalCosts += factor * (brushPrice ?? 0);
+
+      if (primerPrice && project.squareFeet) {
+        additionalCosts += factor * (caulkPrice ?? 0);
+      }
+    }
 
     // Ensuring that the paint price is a number
     const paintPrice = selectedMaterial
@@ -130,13 +148,9 @@ function ProjectCard() {
 
     // Calculate the cost if the paint type is selected and square footage is provided
     let totalCost = null;
-    if (selectedMaterial && project.squareFeet && !isNaN(paintPrice)) {
-      const costPerHundredSqFt = paintPrice * 2 + primerCost + tapeCost * 2;
-      totalCost = (project.squareFeet / 100) * costPerHundredSqFt;
-    } else {
-      console.error('Invalid input for price or square footage');
+    if (selectedMaterial && project.squareFeet) {
+      totalCost = paintPrice + primerCost + tapeCost + additionalCosts;
     }
-    console.log('Project data being inserted:', project); // Log the project data
 
     // Insert the project with total_cost
     const { error } = await supabase.from('projects').insert([
