@@ -37,94 +37,10 @@ const useUser = () => {
 
 export default useUser;
 
-export interface MaterialPrices {
-  primer_price: number;
-  tape_price: number;
-  rollers_price: number;
-  brushes_price: number;
-  user_id: string;
-  caulk_price: number;
-}
-
-export const fetchUserMaterials = async (
-  userId: string
-): Promise<MaterialPrices> => {
-  const { data, error } = await supabase
-    .from('materials')
-    .select(
-      'primer_price, tape_price, rollers_price, brushes_price, caulk_price'
-    )
-    .eq('user_id', userId)
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data as MaterialPrices;
-};
-
 export const fetchUser = async (userId: string) => {
   return await supabase
     .from('users')
     .select('name, email')
     .eq('id', userId)
     .single();
-};
-
-export const fetchPaints = async (userId: any) => {
-  const { data, error } = await supabase
-    .from('paint_types')
-    .select('*')
-    .eq('user_id', userId);
-
-  if (error) {
-    console.error('Error fetching paints:', error);
-    throw error;
-  }
-
-  return data;
-};
-
-// currently evertyhing is in sq ft and based on 10x10 room (100 sq ft)
-export interface CostCalculationParams {
-  squareFeet: number;
-  primerPrice: number | null;
-  tapePrice: number | null;
-  rollerPrice: number | null;
-  brushPrice: number | null;
-  caulkPrice: number | null;
-  paintPrice: number;
-}
-
-export const calculateTotalCost = ({
-  squareFeet,
-  primerPrice,
-  tapePrice,
-  rollerPrice,
-  brushPrice,
-  caulkPrice,
-  paintPrice,
-}: CostCalculationParams): number | null => {
-  let additionalCosts = 0;
-  const factor = squareFeet / 100; // For each 100 sq ft
-
-  additionalCosts += factor * (rollerPrice ?? 0);
-  additionalCosts += factor * (brushPrice ?? 0);
-  if (primerPrice && squareFeet) {
-    additionalCosts += factor * (caulkPrice ?? 0);
-  }
-
-  let primerCost = 0;
-  if (primerPrice && squareFeet) {
-    primerCost = (squareFeet / 100) * primerPrice;
-  }
-
-  const tapeCost = tapePrice ? tapePrice : 0;
-
-  if (squareFeet) {
-    return paintPrice + primerCost + tapeCost + additionalCosts;
-  }
-
-  return null;
 };

@@ -2,14 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from './ui/button';
-import {
-  MaterialPrices,
-  fetchUserMaterials,
-  fetchPaints,
-  calculateTotalCost,
-} from '@/lib/utils';
+import { MaterialPrices, fetchUserMaterials } from '@/lib/fetchUserMaterials';
 import useUser from '@/lib/utils';
-import CostCalculationParams from '@/lib/utils';
+import { calculateTotalCost } from '@/lib/calculateTotalCost';
+import { fetchPaints } from '@/lib/fetchPaints';
 
 interface Paint {
   paint_brand: string;
