@@ -2,9 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from './ui/button';
-import { fetchUserMaterials, fetchPaints } from '@/lib/utils';
+import {
+  MaterialPrices,
+  fetchUserMaterials,
+  fetchPaints,
+  calculateTotalCost,
+} from '@/lib/utils';
 import useUser from '@/lib/utils';
-import { MaterialPrices } from '@/lib/utils';
+import CostCalculationParams from '@/lib/utils';
 
 interface Paint {
   paint_brand: string;
@@ -91,39 +96,19 @@ function ProjectCard() {
       data: { user },
     } = await supabase.auth.getUser();
 
-    // Find the selected material
     const selectedMaterial = paintBrand.find(
       (m) => m.paint_brand === project.paintType
     );
-    let additionalCosts = 0;
-    if (project.squareFeet) {
-      const factor = project.squareFeet / 100; // For each 100 sq ft
-      additionalCosts += factor * (rollerPrice ?? 0);
-      additionalCosts += factor * (brushPrice ?? 0);
 
-      if (primerPrice && project.squareFeet) {
-        additionalCosts += factor * (caulkPrice ?? 0);
-      }
-    }
-
-    // Ensuring that the paint price is a number
-    const paintPrice = selectedMaterial
-      ? Number(selectedMaterial.paint_price)
-      : 0;
-    // Calculate the primer cost at 1 bucket per 100 sq ft
-    let primerCost = 0;
-    if (primerPrice && project.squareFeet) {
-      primerCost = (project.squareFeet / 100) * primerPrice;
-    }
-
-    // Calculate the tape cost at 2 rolls per 100 sq ft
-    const tapeCost = tapePrice ? tapePrice : 0;
-
-    // Calculate the cost if the paint type is selected and square footage is provided
-    let totalCost = null;
-    if (selectedMaterial && project.squareFeet) {
-      totalCost = paintPrice + primerCost + tapeCost + additionalCosts;
-    }
+    const totalCost = calculateTotalCost({
+      squareFeet: project.squareFeet,
+      primerPrice: primerPrice,
+      tapePrice: tapePrice,
+      rollerPrice: rollerPrice,
+      brushPrice: brushPrice,
+      caulkPrice: caulkPrice,
+      paintPrice: selectedMaterial ? Number(selectedMaterial.paint_price) : 0,
+    });
 
     // Insert the project with total_cost
     const { error } = await supabase.from('projects').insert([
