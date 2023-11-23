@@ -2,6 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from './ui/button';
+import { fetchUserMaterials, fetchPaints } from '@/lib/utils';
+import useUser from '@/lib/utils';
+import { MaterialPrices } from '@/lib/utils';
 
 interface Paint {
   paint_brand: string;
@@ -19,62 +22,8 @@ function ProjectCard() {
   const [caulkPrice, setCaulkPrice] = useState<number | null>(null);
 
   const supabase = createClientComponentClient();
+  const user = useUser();
 
-  const fetchMaterials = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      const { data, error } = await supabase
-        .from('materials')
-        .select(
-          'primer_price, tape_price, rollers_price, brushes_price, caulk_price'
-        )
-        .eq('user_id', user.id)
-        .single(); // Assuming each user has only one materials row
-
-      if (error) {
-        console.error('Error fetching materials:', error);
-      } else {
-        setPrimerPrice(data?.primer_price);
-        setTapePrice(data?.tape_price);
-        setRollerPrice(data?.rollers_price);
-        setBrushPrice(data?.brushes_price);
-        setCaulkPrice(data?.caulk_price);
-      }
-    } else {
-      console.error('No user logged in');
-    }
-  };
-
-  const fetchPaints = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      const { data, error } = await supabase
-        .from('paint_types')
-        .select('*')
-        .eq('user_id', user.id);
-
-      if (error) {
-        console.error('Error fetching paints:', error);
-      } else {
-        setPaintBrand(data);
-      }
-    } else {
-      console.error('No user logged in');
-      setPaintBrand([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchPaints();
-    fetchMaterials();
-  }, []);
-  console.log(paintBrand);
   const [project, setProject] = useState({
     name: '',
     address: '',
@@ -85,6 +34,30 @@ function ProjectCard() {
     projectZipcode: '',
     project_image: '',
   });
+
+  useEffect(() => {
+    if (user) {
+      fetchUserMaterials(user.id)
+        .then((data: MaterialPrices) => {
+          setPrimerPrice(data.primer_price);
+          setTapePrice(data.tape_price);
+          setRollerPrice(data.rollers_price);
+          setBrushPrice(data.brushes_price);
+          setCaulkPrice(data.caulk_price);
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchPaints(user.id)
+        .then((paints) => {
+          setPaintBrand(paints);
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [user]);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>

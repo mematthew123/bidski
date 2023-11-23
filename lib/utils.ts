@@ -1,52 +1,87 @@
+'use client';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { useState, useEffect } from 'react';
+
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-type TotalProjectCost = {
-  paint_price: number;
-  primer_price: number;
-  squareFeet: number;
-  tape_price: number;
-  drop_sheet_price: number;
-  roller_price: number;
-  brush_price: number;
-  cleaning_price: number;
+const supabase = createClientComponentClient();
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const useUser = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const supabase = createClientComponentClient();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user as any);
+    };
+
+    fetchUser();
+  }, []);
+
+  return user;
 };
 
-export function calculateTotalProjectCost({
-  paint_price,
-  primer_price,
-  squareFeet,
-  tape_price,
-  drop_sheet_price,
-  roller_price,
-  brush_price,
-  cleaning_price,
-}: TotalProjectCost): number {
-  const paintQuantity = Math.ceil(squareFeet / 400);
-  const primerQuantity = Math.ceil(squareFeet / 350);
+export default useUser;
 
-  // Calculate the cost for each material
-  const paintCost = paintQuantity * paint_price;
-  const primerCost = primerQuantity * primer_price;
-
-  // Calculate the cost for tape, brushes, and rollers (2 each)
-  const tapeCost = 2 * tape_price;
-  const brushCost = 2 * brush_price;
-  const rollerCost = 2 * roller_price;
-
-  // Sum up the total cost
-  const totalCost =
-    paintCost +
-    primerCost +
-    tapeCost +
-    drop_sheet_price +
-    rollerCost +
-    brushCost +
-    cleaning_price;
-
-  return totalCost;
+export interface MaterialPrices {
+  primer_price: number;
+  tape_price: number;
+  rollers_price: number;
+  brushes_price: number;
+  user_id: string;
+  caulk_price: number;
 }
+
+export const fetchUserMaterials = async (
+  userId: string
+): Promise<MaterialPrices> => {
+  const { data, error } = await supabase
+    .from('materials')
+    .select(
+      'primer_price, tape_price, rollers_price, brushes_price, caulk_price'
+    )
+    .eq('user_id', userId)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data as MaterialPrices;
+};
+
+export const fetchUser = async (userId: string) => {
+  return await supabase
+    .from('users')
+    .select('name, email')
+    .eq('id', userId)
+    .single();
+};
+
+export const fetchPaints = async (userId: any) => {
+  const { data, error } = await supabase
+    .from('paint_types')
+    .select('*')
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('Error fetching paints:', error);
+    throw error;
+  }
+
+  return data;
+};
