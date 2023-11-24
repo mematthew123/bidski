@@ -1,3 +1,8 @@
+// This is where the actual calculation happens. The calculateTotalCost function
+// takes in an object of parameters and returns a number. The parameters are
+// passed in from the useCalculateTotalCost hook. The hook is used in the
+// ProductCard component to calculate the total cost of the product.
+
 // currently evertyhing is in sq ft and based on 10x10 room (100 sq ft)
 export interface CostCalculationParams {
   squareFeet: number;
