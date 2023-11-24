@@ -1,9 +1,3 @@
-// This is where the actual calculation happens. The calculateTotalCost function
-// takes in an object of parameters and returns a number. The parameters are
-// passed in from the useCalculateTotalCost hook. The hook is used in the
-// ProductCard component to calculate the total cost of the product.
-
-// currently evertyhing is in sq ft and based on 10x10 room (100 sq ft)
 export interface CostCalculationParams {
   squareFeet: number;
   primerPrice: number | null;
@@ -12,7 +6,10 @@ export interface CostCalculationParams {
   brushPrice: number | null;
   caulkPrice: number | null;
   paintPrice: number;
+  dropSheetsPrice: number | null;
+  cleaningSuppliesPrice: number | null;
 }
+
 export const calculateTotalCost = ({
   squareFeet,
   primerPrice,
@@ -21,18 +18,22 @@ export const calculateTotalCost = ({
   brushPrice,
   caulkPrice,
   paintPrice,
+  dropSheetsPrice,
+  cleaningSuppliesPrice,
 }: CostCalculationParams): number | null => {
   if (!squareFeet) return null;
 
   const factor = squareFeet / 100; // For each 100 sq ft
 
-  let additionalCosts = 0;
-  additionalCosts += factor * (rollerPrice ?? 0);
-  additionalCosts += factor * (brushPrice ?? 0);
-  additionalCosts += factor * (caulkPrice ?? 0); // Moved outside the primerPrice condition
+  let totalCost = 0;
+  totalCost += factor * (primerPrice ?? 0);
+  totalCost += factor * (tapePrice ?? 0);
+  totalCost += factor * (rollerPrice ?? 0);
+  totalCost += factor * (brushPrice ?? 0);
+  totalCost += factor * (caulkPrice ?? 0);
+  totalCost += factor * (paintPrice ?? 0); // Now scaling paint price
+  totalCost += factor * (dropSheetsPrice ?? 0);
+  totalCost += factor * (cleaningSuppliesPrice ?? 0);
 
-  let primerCost = primerPrice ? factor * primerPrice : 0;
-  let tapeCost = tapePrice ? tapePrice : 0;
-
-  return paintPrice + primerCost + tapeCost + additionalCosts;
+  return totalCost;
 };
