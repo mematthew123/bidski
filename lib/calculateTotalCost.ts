@@ -13,7 +13,6 @@ export interface CostCalculationParams {
   caulkPrice: number | null;
   paintPrice: number;
 }
-
 export const calculateTotalCost = ({
   squareFeet,
   primerPrice,
@@ -23,25 +22,17 @@ export const calculateTotalCost = ({
   caulkPrice,
   paintPrice,
 }: CostCalculationParams): number | null => {
-  let additionalCosts = 0;
+  if (!squareFeet) return null;
+
   const factor = squareFeet / 100; // For each 100 sq ft
 
+  let additionalCosts = 0;
   additionalCosts += factor * (rollerPrice ?? 0);
   additionalCosts += factor * (brushPrice ?? 0);
-  if (primerPrice && squareFeet) {
-    additionalCosts += factor * (caulkPrice ?? 0);
-  }
+  additionalCosts += factor * (caulkPrice ?? 0); // Moved outside the primerPrice condition
 
-  let primerCost = 0;
-  if (primerPrice && squareFeet) {
-    primerCost = (squareFeet / 100) * primerPrice;
-  }
+  let primerCost = primerPrice ? factor * primerPrice : 0;
+  let tapeCost = tapePrice ? tapePrice : 0;
 
-  const tapeCost = tapePrice ? tapePrice : 0;
-
-  if (squareFeet) {
-    return paintPrice + primerCost + tapeCost + additionalCosts;
-  }
-
-  return null;
+  return paintPrice + primerCost + tapeCost + additionalCosts;
 };

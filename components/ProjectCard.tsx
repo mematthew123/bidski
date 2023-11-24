@@ -1,31 +1,17 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Button } from './ui/button';
-import { MaterialPrices, fetchUserMaterials } from '@/lib/fetchUserMaterials';
-import useUser from '@/lib/utils';
+import React, { useState, useEffect, useRef } from 'react';
+import useProjectFormHandlers, {
+  ProjectState,
+  Paint,
+} from '@/lib/hooks/useProjectFormHandlers';
 import { calculateTotalCost } from '@/lib/calculateTotalCost';
+import useUser from '@/lib/utils';
+import { MaterialPrices, fetchUserMaterials } from '@/lib/fetchUserMaterials';
 import { fetchPaints } from '@/lib/fetchPaints';
-
-interface Paint {
-  paint_brand: string;
-  paint_price: number;
-  user_id: string;
-}
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 function ProjectCard() {
-  const [calculatedCost, setCalculatedCost] = useState<number | null>(null);
-  const [paintBrand, setPaintBrand] = useState<Paint[]>([]);
-  const [primerPrice, setPrimerPrice] = useState<number | null>(null);
-  const [tapePrice, setTapePrice] = useState<number | null>(null);
-  const [rollerPrice, setRollerPrice] = useState<number | null>(null);
-  const [brushPrice, setBrushPrice] = useState<number | null>(null);
-  const [caulkPrice, setCaulkPrice] = useState<number | null>(null);
-
-  const supabase = createClientComponentClient();
-  const user = useUser();
-
-  const [project, setProject] = useState({
+  const [project, setProject] = useState<ProjectState>({
     name: '',
     address: '',
     squareFeet: 0,
@@ -35,7 +21,38 @@ function ProjectCard() {
     projectZipcode: '',
     project_image: '',
   });
+  const [calculatedCost, setCalculatedCost] = useState<number | null>(null);
+  const [paintBrand, setPaintBrand] = useState<Paint[]>([]);
+  const [primerPrice, setPrimerPrice] = useState<number | null>(null);
+  const [tapePrice, setTapePrice] = useState<number | null>(null);
+  const [rollerPrice, setRollerPrice] = useState<number | null>(null);
+  const [brushPrice, setBrushPrice] = useState<number | null>(null);
+  const [caulkPrice, setCaulkPrice] = useState<number | null>(null);
+  const { handleChange, handleFileChange, handleAddProject } =
+    useProjectFormHandlers(setProject);
 
+  const supabase = createClientComponentClient();
+  const user = useUser();
+
+  // Calculate total cost whenever relevant state variables change
+  useEffect(() => {
+    const selectedPaint = paintBrand.find(
+      (paint) => paint.paint_brand === project.paintType
+    );
+    const paintPrice = selectedPaint ? selectedPaint.paint_price : 0;
+
+    const totalCost = calculateTotalCost({
+      squareFeet: project.squareFeet,
+      primerPrice: primerPrice ?? 0,
+      tapePrice: tapePrice ?? 0,
+      rollerPrice: rollerPrice ?? 0,
+      brushPrice: brushPrice ?? 0,
+      caulkPrice: caulkPrice ?? 0,
+      paintPrice: paintPrice,
+    });
+
+    setCalculatedCost(totalCost);
+  }, [project, primerPrice, tapePrice, rollerPrice, brushPrice, caulkPrice]);
   useEffect(() => {
     if (user) {
       fetchUserMaterials(user.id)
@@ -60,93 +77,19 @@ function ProjectCard() {
     }
   }, [user]);
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const filePath = `project-images/${Date.now()}_${file.name}`;
-    const { data, error } = await supabase.storage
-      .from('bidski')
-      .upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: false,
-      });
-
-    if (error) {
-      console.error('Error uploading file:', error);
-      return;
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (fileInputRef.current?.files?.length) {
+      await handleFileChange({
+        target: fileInputRef.current,
+      } as React.ChangeEvent<HTMLInputElement>);
     }
 
-    console.log('File path:', filePath);
-    setProject((prev) => {
-      const updatedProject = { ...prev, project_image: filePath };
-      console.log('Updated project state:', updatedProject);
-      return updatedProject;
-    });
+    // Use the calculated cost from the state
+    await handleAddProject(project, paintBrand, calculatedCost ?? 0);
   };
-
-  const handleAddProject = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    const selectedMaterial = paintBrand.find(
-      (m) => m.paint_brand === project.paintType
-    );
-
-    const totalCost = calculateTotalCost({
-      squareFeet: project.squareFeet,
-      primerPrice: primerPrice,
-      tapePrice: tapePrice,
-      rollerPrice: rollerPrice,
-      brushPrice: brushPrice,
-      caulkPrice: caulkPrice,
-      paintPrice: selectedMaterial ? Number(selectedMaterial.paint_price) : 0,
-    });
-
-    // Insert the project with total_cost
-    const { error } = await supabase.from('projects').insert([
-      {
-        project_name: project.name,
-        project_address: project.address,
-        total_square_feet: project.squareFeet,
-        needs_cleaning: project.needsCleaning,
-        paint_type: project.paintType,
-        client_name: project.clientName,
-        project_zipcode: project.projectZipcode,
-        user_id: user?.id,
-        total_cost: totalCost, // Include the calculated cost here
-        project_image: project.project_image, // Include the image path here
-      },
-    ]);
-    console.log('Project data before submission:', project);
-
-    if (error) {
-      console.error('Error adding project:', error);
-    } else {
-      setProject({
-        name: '',
-        address: '',
-        squareFeet: 0,
-        needsCleaning: false,
-        paintType: 'Regular',
-        clientName: '',
-        projectZipcode: '',
-        project_image: '',
-      });
-      setCalculatedCost(totalCost);
-    }
-  };
-
-  const handleChange =
-    (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      setProject((prev) => ({
-        ...prev,
-        [key]: key === 'squareFeet' ? Number(e.target.value) : e.target.value,
-      }));
-    };
 
   return (
     <div className='container items-center flex-col flex mx-auto max-h-[80vh] overflow-y-auto p-4 rounded-md text-center'>
@@ -155,10 +98,7 @@ function ProjectCard() {
       </h2>
       <form
         className='w-full max-w-md my-10 p-6 bg-white rounded-lg shadow space-y-4'
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleAddProject();
-        }}
+        onSubmit={handleSubmit}
       >
         <label className='block text-lg font-medium'>
           Project Name:
@@ -246,6 +186,7 @@ function ProjectCard() {
           <input
             type='file'
             onChange={handleFileChange}
+            ref={fileInputRef}
             className='block w-full text-sm text-gray-500'
           />
         </label>
